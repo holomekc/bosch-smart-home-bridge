@@ -4,6 +4,8 @@ Allows communication to Bosch Smart Home Controller (BSHC)
 
 [Bosch Smart Home Controller](https://www.bosch-smarthome.com/de/de/produkte/smart-system-solutions/smart-home-controller)
 
+[![NPM](https://nodei.co/npm/bosch-smart-home-bridge.png)](https://nodei.co/npm/bosch-smart-home-bridge/)
+
 ## Getting started
 
 You need to create a new instance of BoschSmartHomeBridge (BSHB). Therefore, you need:
