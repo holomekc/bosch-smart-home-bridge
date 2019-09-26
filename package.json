@@ -1,0 +1,44 @@
+{
+  "name": "bosch-smart-home-bridge",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build:ts": "tsc",
+    "build": "npm run build:ts",
+    "watch:ts": "tsc --watch",
+    "watch": "npm run watch:ts",
+    "lint": "eslint --ext .ts src"
+  },
+  "keywords": [
+    "Bosch Smart Home",
+    "Smart Home",
+    "home automation"
+  ],
+  "author": {
+    "name": "Christopher Holomek",
+    "email": "holomekc.github@gmail.com"
+  },
+  "homepage": "https://github.com/holomekc/bosch-smart-home-bridge",
+  "license": "MIT",
+  "description": "Allows communication to Bosch Smart Home Controller",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/holomekc/bosch-smart-home-bridge"
+  },
+  "bugs": {
+    "url": "https://github.com/holomekc/bosch-smart-home-bridge/issues"
+  },
+  "dependencies": {
+    "rxjs": "^6.5.3",
+    "typescript": "^3.6.3",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.5",
+    "@types/uuid": "^3.4.5",
+    "@typescript-eslint/eslint-plugin": "^2.3.1",
+    "@typescript-eslint/parser": "^2.3.1",
+    "eslint": "^6.0.1"
+  }
+}
