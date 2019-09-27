@@ -39,16 +39,11 @@ If you are interested in updates from bshc you can use long polling. Therefore, 
 
 ```typescript
 const mac = 'xx-xx-xx-xx-xx-xx';
-const pollingTrigger = new BehaviorSubject(true);
 
 bshb.getBshcClient().subscribe(mac).subscribe(result => {
-        pollingTrigger.subscribe(() => {
-            bshb.getBshcClient().longPolling(mac, result.result).subscribe(info => {
-                // do something with the information
-
-                bshb.getBshcClient().unsubscribe(mac, result.result).subscribe(() => {
-                });
-            });
+        bshb.getBshcClient().longPolling(mac, result.result).subscribe(info => {
+            // do something with the information
+            // also you need to call longPolling again after connection close
         });
     });
 ```
