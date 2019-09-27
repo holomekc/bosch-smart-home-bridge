@@ -170,7 +170,7 @@ export class BshcClient extends AbstractBshcClient {
      * @param requestOptions
      *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
-    public call(port: number, method: string, path: string, data?: any, requestOptions?: any): Observable<any> {
+    public call<T>(port: number, method: string, path: string, data?: any, requestOptions?: any): Observable<T> {
         let options = this.getOptions();
         options.requestOptions = requestOptions;
         return this.simpleCall(port, method, path, data, options);
