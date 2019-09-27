@@ -11,25 +11,50 @@ Allows communication to Bosch Smart Home Controller (BSHC)
 You need to create a new instance of BoschSmartHomeBridge (BSHB). Therefore, you need:
 * host name / ip address of BSHC
 * a unique identifier for the new client (uuid is ok but can be any string)
-* name of the client
 * absolute path to a directory where client certificates are located or will be generated to
 * a logger which implements the interface which is defined in this library
 ```typescript
-const bshb = new BoschSmartHomeBridge('192.168.0.10', '0fdbe4b9-5580-49f6-9f86-c8a9bfa5ae71', 'bosch-smart-home-bridge', '/absolute/path', new DefaultLogger());
+const bshb = new BoschSmartHomeBridge('192.168.0.10', 
+                                      '0fdbe4b9-5580-49f6-9f86-c8a9bfa5ae71',
+                                      '/absolute/path', new DefaultLogger());
 ```
 
 ## Pairing
 Then you need to start the pairing process. Therefore, you need:
+* name of the client
 * system password of BSHC
 ```typescript
-bshb.pairDeviceIfNeeded('systemPassword');
+bshb.pairDeviceIfNeeded('name', 'systemPassword');
 ```
 
 ## Communication
-After that you cann use BSHB to communicate with BSHC. Just use:
+After that you can use BSHB to communicate with BSHC. Therefore, just use the provided client which provides
+some helpful methods:
 ```typescript
 bshb.getBshcClient()
 ```
 
-which provides some methods for communication
+## Long Polling
+If you are interested in updates from bshc you can use long polling. Therefore, you need to do the following:
 
+```typescript
+const mac = 'xx-xx-xx-xx-xx-xx';
+const pollingTrigger = new BehaviorSubject(true);
+
+bshb.getBshcClient().subscribe(mac).subscribe(result => {
+        pollingTrigger.subscribe(() => {
+            bshb.getBshcClient().longPolling(mac, result.result).subscribe(info => {
+                // do something with the information
+
+                bshb.getBshcClient().unsubscribe(mac, result.result).subscribe(() => {
+                });
+            });
+        });
+    });
+```
+
+Do not forget to unsubscribe. E.g. in error case or on application end.
+```typescript
+bshb.getBshcClient().unsubscribe(mac, result.result).subscribe(() => {
+                });
+```

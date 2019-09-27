@@ -22,7 +22,6 @@ export class PairingClient extends AbstractBshcClient {
         super(host, logger);
     }
 
-    private static PAIR_PORT = 8443;
     private static PAIR_PATH = '/smarthome/clients';
 
     /**

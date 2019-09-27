@@ -13,6 +13,7 @@ import {AbstractBshcClient} from './abstract-bshc-client';
 export class BshcClient extends AbstractBshcClient {
 
     private static COMMON_PORT = 8444;
+    private static PATH_PREFIX = 'smarthome';
 
     /**
      * Create a new instance of the Bosch Smart Home Controller Client
@@ -30,7 +31,7 @@ export class BshcClient extends AbstractBshcClient {
         super(host, logger);
     }
 
-    private getOptions() {
+    private getOptions(): { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any } {
         return {
             certificateStorage: this.certificateStorage,
             identifier: this.identifier
@@ -38,11 +39,19 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get information about BSHC
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getInformation(): Observable<any> {
+        return this.simpleCall(BshcClient.PAIR_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/information`, null, this.getOptions());
+    }
+
+    /**
      * Get all rooms stored
      * @return an object based on the json structure returned from BSHC
      */
     public getRooms(): Observable<any[]> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', '/smarthome/rooms', null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/rooms`, null, this.getOptions());
     }
 
     /**
@@ -50,7 +59,15 @@ export class BshcClient extends AbstractBshcClient {
      * @return an object based on the json structure returned from BSHC
      */
     public getDevices(): Observable<any> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', '/smarthome/devices', null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/devices`, null, this.getOptions());
+    }
+
+    /**
+     * Get supported device types
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getSupportedDeviceTypes(): Observable<any> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/configuration/supportedDeviceTypes`, null, this.getOptions());
     }
 
     /**
@@ -58,7 +75,7 @@ export class BshcClient extends AbstractBshcClient {
      * @return an object based on the json structure returned from BSHC
      */
     public getDevicesServices(): Observable<any[]> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', '/smarthome/services', null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/services`, null, this.getOptions());
     }
 
     /**
@@ -70,7 +87,74 @@ export class BshcClient extends AbstractBshcClient {
      * @return an object based on the json structure returned from BSHC
      */
     public putState(path: string, data: any): Observable<any[]> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/smarthome/${path}/state`, data, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/${path}/state`, data, this.getOptions());
+    }
+
+    /**
+     * Get all connected clients
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getClients(): Observable<any[]> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/clients`, null, this.getOptions());
+    }
+
+    /**
+     * Subscribe to listen to notifications of bshc
+     *
+     * @param bshcMac
+     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
+     * @return an object which contains 'result' which is the subscriptionId and 'jsonrpc' which is the json-rpc version
+     */
+    public subscribe(bshcMac: string): Observable<{ result: string, jsonrpc: string }> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+            'jsonrpc': '2.0',
+            'method': 'RE/subscribe',
+            'params': [ 'com/bosch/sh/remote/*', null ] // we subscribe to all topics
+        }, {
+            headers: {
+                'Gateway-ID': bshcMac
+            }
+        });
+    }
+
+    /**
+     * Start long polling after subscription
+     *
+     * @param bshcMac
+     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
+     * @param subscriptionId
+     *        identifier from subscription request
+     */
+    public longPolling(bshcMac: string, subscriptionId: string): Observable<{ result: any[], jsonrpc: string }> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+            'jsonrpc': '2.0',
+            'method': 'RE/longPoll',
+            'params': [ subscriptionId, 20 ]
+        }, {
+            headers: {
+                'Gateway-ID': bshcMac
+            }
+        });
+    }
+
+    /**
+     * Stop subscription
+     *
+     * @param bshcMac
+     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
+     * @param subscriptionId
+     *        identifier from subscription request
+     */
+    public unsubscribe(bshcMac: string, subscriptionId: string): Observable<{ result: null, jsonrpc: string }> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+            'jsonrpc': '2.0',
+            'method': 'RE/unsubscribe',
+            'params': [ subscriptionId ]
+        }, {
+            headers: {
+                'Gateway-ID': bshcMac
+            }
+        });
     }
 
     /**
@@ -83,8 +167,12 @@ export class BshcClient extends AbstractBshcClient {
      *        url path to use
      * @param data
      *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request.
+     * @param requestOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
-    public call(port: number, method: string, path: string, data?: any) {
-        return this.simpleCall(port, 'PUT', path, data, this.getOptions());
+    public call(port: number, method: string, path: string, data?: any, requestOptions?: any): Observable<any> {
+        let options = this.getOptions();
+        options.requestOptions = requestOptions;
+        return this.simpleCall(port, method, path, data, options);
     }
 }

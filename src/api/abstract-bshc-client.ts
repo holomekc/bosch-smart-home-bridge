@@ -11,6 +11,8 @@ import {CertificateStorage} from '../certificate-storage';
  */
 export abstract class AbstractBshcClient {
 
+    protected static PAIR_PORT = 8443;
+
     /**
      * Needed parameters for a {@link AbstractBshcClient}
      *
@@ -35,19 +37,33 @@ export abstract class AbstractBshcClient {
      * @param options
      *        a set of options to specify the call regarding security.
      */
-    protected simpleCall<T>(port: number, method: string, path: string, data?: any, options?: { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string }): Observable<T> {
+    protected simpleCall<T>(port: number, method: string, path: string, data?: any, options?: { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any }): Observable<T> {
 
-        const requestOptions: any = {
-            hostname: this.host,
-            port: port,
-            path: path,
-            method: method,
-            rejectUnauthorized: false, // self signed cert ignored of BSHC. Maybe we could add an option to set the caCert as well which would make it more secure.
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        };
+        const requestOptions: any = {};
+
+        if (options && options.requestOptions) {
+            Object.keys(options.requestOptions).forEach(key => {
+                requestOptions[key] = options.requestOptions[key];
+            })
+        }
+
+        requestOptions.hostname = this.host;
+        requestOptions.port = port;
+        requestOptions.path = path;
+        requestOptions.method = method;
+        requestOptions.rejectUnauthorized = false; // self signed cert ignored of BSHC. Maybe we could add an option to set the caCert as well which would make it more secure.
+        if (!requestOptions.headers) {
+            requestOptions.headers = {};
+        }
+
+        requestOptions.headers['Content-Type'] = 'application/json';
+        requestOptions.headers['Accept'] = 'application/json';
+
+        if (options && options.requestOptions) {
+            Object.keys(options.requestOptions).forEach(key => {
+                requestOptions[key] = options.requestOptions[key];
+            });
+        }
 
         if(options && options.certificateStorage && options.identifier) {
             requestOptions.key = options.certificateStorage.getClientCertificateKey(options.identifier);
