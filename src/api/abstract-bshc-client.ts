@@ -115,9 +115,15 @@ export abstract class AbstractBshcClient {
                         this.logger.fine('content: ', dataString);
                         this.logger.fine('');
 
-                        const dataObj = JSON.parse(dataString);
+                        let parsedResponse;
+                        try{
+                            parsedResponse = JSON.parse(dataString);
+                        }catch (e) {
+                            // Could not parse JSON. Something went wrong. Returning string instead.
+                            parsedResponse = dataString;
+                        }
 
-                        observer.next(dataObj);
+                        observer.next(parsedResponse);
                     }
                     observer.complete();
                 });
