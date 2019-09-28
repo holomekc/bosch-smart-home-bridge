@@ -1,10 +1,14 @@
 ![Logo](resources/bshb-logo.jpg)
+
+[![NPM version](http://img.shields.io/npm/v/bosch-smart-home-bridge.svg)](https://www.npmjs.com/package/bosch-smart-home-bridge)
+[![Downloads](https://img.shields.io/npm/dm/bosch-smart-home-bridge.svg)](https://www.npmjs.com/package/bosch-smart-home-bridge)
+[![Dependency Status](https://david-dm.org/holomekc/bosch-smart-home-bridge.svg)](https://david-dm.org/holomekc/bosch-smart-home-bridge)
+[![Known Vulnerabilities](https://snyk.io/test/github/holomekc/bosch-smart-home-bridge/badge.svg)](https://snyk.io/test/github/holomekc/bosch-smart-home-bridge)
+[![NPM](https://nodei.co/npm/bosch-smart-home-bridge.png)](https://nodei.co/npm/bosch-smart-home-bridge/)
 # bosch-smart-home-bridge
 Allows communication to Bosch Smart Home Controller (BSHC)
 
 [Bosch Smart Home Controller](https://www.bosch-smarthome.com/de/de/produkte/smart-system-solutions/smart-home-controller)
-
-[![NPM](https://nodei.co/npm/bosch-smart-home-bridge.png)](https://nodei.co/npm/bosch-smart-home-bridge/)
 
 ## Getting started
 
