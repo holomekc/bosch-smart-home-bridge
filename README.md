@@ -29,7 +29,7 @@ Then you need to start the pairing process. Therefore, you need:
 * name of the client
 * system password of BSHC
 ```typescript
-bshb.pairDeviceIfNeeded('name', 'systemPassword');
+bshb.pairIfNeeded('name', 'systemPassword');
 ```
 
 ## Communication
