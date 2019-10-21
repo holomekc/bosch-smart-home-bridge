@@ -7,22 +7,18 @@
 export class BoschClientData {
 
     private '@type' = 'client';
-    private primaryRole = 'ROLE_DEFAULT_CLIENT';
-    private dynamicRoles = [];
-    private os = 'ANDROID';
-    private osVersion = '8.0';
-    private appVersion = '9.2.2';
+    private primaryRole = 'ROLE_RESTRICTED_CLIENT';
     private deleted = false;
 
     /**
      * Create data for a new client with necessary information
      *
      * @param name
-     *        name of the new client
+     *        name of the Open Source Project, which uses this library.  
      * @param id
      *        identifier of the new client (pick a unique one)
      * @param certificate
-     *        client certificate to use
+     *        2048 bit selfsigned client certificate
      */
     constructor(private name: string, private id: string, private certificate: string) {
     }
