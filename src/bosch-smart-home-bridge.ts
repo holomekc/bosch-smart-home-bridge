@@ -28,7 +28,7 @@ export class BoschSmartHomeBridge {
      * @param host
      *        host name / ip address of BSHC
      * @param identifier
-     *        unique identifier to use (during pairing or for communication)
+     *        unique identifier to use (during pairing or for communication). "oss_" prefix is added automatically.
      * @param certPath
      *        absolute directory where client certificate is located
      * @param logger
@@ -52,7 +52,7 @@ export class BoschSmartHomeBridge {
      * Pair to BSHC if not already paired.
      *
      * @param name
-     *        name of the client if pairing is necessary
+     *        name of the client if pairing is necessary. "OSS " prefix is added automatically
      * @param systemPassword
      *        system password of BSHC which is needed for pairing
      * @param pairingDelay
