@@ -79,6 +79,70 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get all scenarios
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getScenarios(): Observable<any[]> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/scenarios`, null, this.getOptions());
+    }
+
+    /**
+     * Trigger the specified scenario
+     * @param scenarioId
+     *        identifier of a scenario
+     * @return an object based on the json structure returned from BSHC
+     */
+    public triggerScenario(scenarioId: string): Observable<any> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/scenarios/${scenarioId}/triggers`, null, this.getOptions());
+    }
+
+    /**
+     * Get alarm state
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getAlarmState(): Observable<any> {
+        const path = '/devices/intrusionDetectionSystem/services/IntrusionDetectionControl/state';
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`, null, this.getOptions());
+    }
+
+    /**
+     * Set alarm state
+     * @param armed
+     *        <code>true</code> if alarm should be armed. Otherwise <code>false</code>
+     * @return an object based on the json structure returned from BSHC
+     */
+    public setAlarmState(armed: boolean): Observable<any> {
+        let value;
+        if (armed) {
+            value = '"SYSTEM_ARMED"';
+        } else {
+            value = '"SYSTEM_DISARMED"';
+        }
+        const data = `{"@type": "intrusionDetectionControlState","value": ${value}}`;
+        return this.putState('devices/intrusionDetectionSystem/services/IntrusionDetectionControl', data);
+    }
+
+    /**
+     * Get alarm state
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getPresenceSimulation(): Observable<any> {
+        const path = '/devices/presenceSimulationService/services/PresenceSimulationConfiguration/state';
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`, null, this.getOptions());
+    }
+
+    /**
+     * Set alarm state
+     * @param enable
+     *        <code>true</code> if presence is enabled. Otherwise <code>false</code>
+     * @return an object based on the json structure returned from BSHC
+     */
+    public setPresenceSimulation(enable: boolean): Observable<any> {
+        const data = `{"@type": "presenceSimulationConfigurationState","enabled": ${enable}}`;
+        return this.putState('devices/presenceSimulationService/services/PresenceSimulationConfiguration', data);
+    }
+
+    /**
      * Tell BSHC to set a new value for a specified state. Use the device service path to identify the state
      * @param path
      *        device service path to use
