@@ -1,6 +1,6 @@
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
-import {Observable} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
 
 /**
@@ -55,11 +55,31 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Same as {@link BshcClient#getDevice()}
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDevices(): Observable<any[]> {
+        return this.getDevice();
+    }
+
+    /**
      * Get all devices
      * @return an object based on the json structure returned from BSHC
      */
-    public getDevices(): Observable<any> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/devices`, null, this.getOptions());
+    public getDevice(): Observable<any[]>;
+
+    /**
+     * Get a specified device
+     * @param deviceId identifier of the device interested in
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDevice(deviceId: string): Observable<any>;
+
+    public getDevice(deviceId?: string): Observable<any | any[]> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`, null, this.getOptions());
+    }
+
+    public getDeviceServiceIds(deviceId: string) {
     }
 
     /**
@@ -71,11 +91,51 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
-     * Get all device services
+     * Get services of all devices
      * @return an object based on the json structure returned from BSHC
      */
     public getDevicesServices(): Observable<any[]> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/services`, null, this.getOptions());
+        return this.getDeviceServices();
+    }
+
+    /**
+     * Get all services of all devices
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDeviceServices(): Observable<any[]>;
+
+    /**
+     * Get all services of a specified device
+     * @param deviceId identifier of the relevant device
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDeviceServices(deviceId: string): Observable<any[]>;
+
+    /**
+     * Get all services of a specified device
+     * @param deviceId identifier of the relevant device
+     * @param serviceId <code>'all'</code> to get all services
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDeviceServices(deviceId: string, serviceId: 'all'): Observable<any[]>;
+
+    /**
+     * Get a specified service of a specified device
+     * @param deviceId identifier of the relevant device
+     * @param serviceId identifier of a service
+     * @return an object based on the json structure returned from BSHC
+     */
+    public getDeviceServices(deviceId: string, serviceId: string): Observable<any[]>;
+
+    public getDeviceServices(deviceId?: string, serviceId?: string | 'all'): Observable<any[]> {
+        let path = `/${BshcClient.PATH_PREFIX}/services`;
+        if (deviceId) {
+            path = `/${BshcClient.PATH_PREFIX}/devices/${deviceId}/services/`;
+            if (serviceId && serviceId !== 'all') {
+                path += serviceId;
+            }
+        }
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions());
     }
 
     /**
