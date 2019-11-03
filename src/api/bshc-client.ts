@@ -1,7 +1,8 @@
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, of} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
+import {map, switchMap} from "rxjs/operators";
 
 /**
  * This client contains some basic calls which are available to contact Bosch Smart Home Controller (BSHC)
@@ -79,7 +80,24 @@ export class BshcClient extends AbstractBshcClient {
         return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`, null, this.getOptions());
     }
 
-    public getDeviceServiceIds(deviceId: string) {
+    /**
+     * Get all available service ids of a specified device
+     * @param deviceId identifier of a device
+     * @return a string array which contains all service ids of a device
+     */
+    public getDeviceServiceIds(deviceId: string): Observable<string[]> {
+        if (deviceId) {
+            return this.getDeviceServices(deviceId).pipe(map(services => {
+                const result: string[] = [];
+                services.forEach(service => {
+                    // although the library never cared about the response we need to do this here.
+                    result.push(service.id);
+                });
+                return result;
+            }))
+        }else {
+            return of(<string[]>[]);
+        }
     }
 
     /**
