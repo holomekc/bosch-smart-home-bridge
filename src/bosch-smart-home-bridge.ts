@@ -89,6 +89,7 @@ export class BoschSmartHomeBridge {
 
     private pairClient(name: string, systemPassword: string, pairingDelay: number, pairingAttempts: number): Observable<BshbResponse<{ url: string, token: string }>> {
         return new Observable(observer => {
+            this.certificateStorage.generateClientCertificate(this.identifier);
             const clientCertificate = this.certificateStorage.getClientCertificate(this.identifier);
             this.logger.info('Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing.');
 
@@ -100,6 +101,11 @@ export class BoschSmartHomeBridge {
                             delay(pairingDelay))))))
                 )
                 .subscribe(value => {
+                    if (value.incomingMessage.statusCode === 201) {
+                        this.logger.info('Pairing successful.');
+                    } else {
+                        this.logger.info('Unexpected pairing response. Most likely wrong input data. Check password, etc. Pairing stopped.');
+                    }
                     observer.next(value);
                     observer.complete();
                 }, error => {

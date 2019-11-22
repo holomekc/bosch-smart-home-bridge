@@ -42,7 +42,10 @@ export class CertificateStorage {
         }
 
         const path = `${this.certPath}/${identifier}.pem`;
-        this.generateClientCertificateIfNeeded(path, identifier);
+        if (!fs.existsSync(path)) {
+            this.logger.warn(`Could not find client certificate for identifier: ${identifier}.`);
+            return '';
+        }
 
         this.certificateCache.set(identifier, fs.readFileSync(path, 'utf-8'));
 
@@ -61,11 +64,18 @@ export class CertificateStorage {
         }
 
         const path = `${this.certPath}/${identifier}-key.pem`;
-        this.generateClientCertificateIfNeeded(path, identifier);
-
+        if (!fs.existsSync(path)) {
+            this.logger.warn(`Could not find client certificate key for identifier: ${identifier}.`);
+            return '';
+        }
         this.keyCache.set(identifier, fs.readFileSync(path, 'utf-8'));
 
         return <string>this.keyCache.get(identifier);
+    }
+
+    public generateClientCertificate(identifier: string) {
+        const path = `${this.certPath}/${identifier}.pem`;
+        this.generateClientCertificateIfNeeded(path, identifier);
     }
 
     private generateClientCertificateIfNeeded(path: string, identifier: string) {
@@ -73,6 +83,8 @@ export class CertificateStorage {
             this.logger.info(`certificate for identifier ${identifier} not found. Creating new client certificate.`);
             this.certificateGenerator.createNewCertificate(identifier);
             this.logger.info('certificate creation successful');
+        } else {
+            this.logger.info(`certificate for identifier ${identifier} found. Skip certificate generation`);
         }
     }
 
