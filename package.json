@@ -1,6 +1,6 @@
 {
   "name": "bosch-smart-home-bridge",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "npm run build:ts",
     "watch:ts": "tsc --watch",
     "watch": "npm run watch:ts",
-    "lint": "eslint --ext .ts src"
+    "lint": "eslint --ext .ts src",
+    "test": "npm run build && node dist/test/test.js"
   },
   "keywords": [
     "Bosch Smart Home",

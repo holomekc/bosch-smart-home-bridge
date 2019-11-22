@@ -44,5 +44,3 @@ typings/
 
 # next.js build output
 .next
-
-src/test-locally.ts

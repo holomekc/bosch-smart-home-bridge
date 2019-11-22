@@ -11,6 +11,8 @@ Allows communication to Bosch Smart Home Controller (BSHC)
 
 [Bosch Smart Home Controller](https://www.bosch-smarthome.com/de/de/produkte/smart-system-solutions/smart-home-controller)
 
+[Bosch Smart Home Controller Local REST API](https://github.com/BoschSmartHome/bosch-shc-api-docs).
+
 ## Getting started
 
 You need to create a new instance of BoschSmartHomeBridge (BSHB). Therefore, you need:
@@ -45,8 +47,8 @@ If you are interested in updates from bshc you can use long polling. Therefore, 
 ```typescript
 const mac = 'xx-xx-xx-xx-xx-xx';
 
-bshb.getBshcClient().subscribe(mac).subscribe(result => {
-        bshb.getBshcClient().longPolling(mac, result.result).subscribe(info => {
+bshb.getBshcClient().subscribe(mac).subscribe(response => {
+        bshb.getBshcClient().longPolling(mac, response.parsedResponse.result).subscribe(info => {
             // do something with the information
             // also you need to call longPolling again after connection close
         });
@@ -55,6 +57,9 @@ bshb.getBshcClient().subscribe(mac).subscribe(result => {
 
 Do not forget to unsubscribe. E.g. in error case or on application end.
 ```typescript
-bshb.getBshcClient().unsubscribe(mac, result.result).subscribe(() => {
+bshb.getBshcClient().unsubscribe(mac, response.parsedResponse.result).subscribe(() => {
                 });
 ```
+
+## Examples
+You can find an example in test directory. Npm arguments must be set manually.

@@ -4,6 +4,7 @@ import {concatMap, delay, retryWhen, tap} from 'rxjs/operators';
 import {iif, Observable, of, throwError} from 'rxjs';
 import {BshcClient} from './api/bshc-client';
 import {CertificateStorage} from './certificate-storage';
+import {BshbResponse} from "./bshb-response";
 
 /**
  * The {@link BoschSmartHomeBridge} (BSHB) allows communication to Bosch Smart Home Controller (BSHC).
@@ -59,35 +60,38 @@ export class BoschSmartHomeBridge {
      *        delay during pairing. This will give the user some time to press the pairing button on BSHC
      * @param pairingAttempts
      *        attempts of pairing in case it is failing because pairing button not pressed on BSHC
+     * @return the response object after pairing or undefined if already paired
      */
-    public pairIfNeeded(name: string, systemPassword: string, pairingDelay: number = 5000, pairingAttempts: number = 50): Observable<{ url: string, token: string } | void> {
-        this.logger.info(`Check if client with identifier: ${this.identifier} is already paired.`);
+    public pairIfNeeded(name: string, systemPassword: string, pairingDelay: number = 5000, pairingAttempts: number = 50)
+        : Observable<BshbResponse<{ url: string, token: string } | undefined>> {
 
         return new Observable(observer => {
+            this.logger.info(`Check if client with identifier: ${this.identifier} is already paired.`);
+
             this.bshcClient.getRooms().subscribe(() => {
                 this.logger.info(`Client with identifier: ${this.identifier} already paired. Using existing certificate`);
                 observer.next();
                 observer.complete();
-            }, error => {
-                this.logger.fine('Error during call to test if already paired.', error);
+            }, testConnectionError => {
+                this.logger.fine('Error during call to test if already paired.', testConnectionError);
                 this.logger.info(`Client with identifier: ${this.identifier} was not paired yet.`);
 
                 this.pairClient(name, systemPassword, pairingDelay, pairingAttempts).subscribe(value => {
                     observer.next(value);
                     observer.complete();
-                }, error1 => {
-                    observer.error(error1);
+                }, error => {
+                    observer.error(error);
+                    observer.complete();
                 });
             });
         });
     }
 
-    private pairClient(name: string, systemPassword: string, pairingDelay: number, pairingAttempts: number): Observable<{ url: string, token: string }> {
-        const clientCertificate = this.certificateStorage.getClientCertificate(this.identifier);
-
-        this.logger.info('Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing.');
-
+    private pairClient(name: string, systemPassword: string, pairingDelay: number, pairingAttempts: number): Observable<BshbResponse<{ url: string, token: string }>> {
         return new Observable(observer => {
+            const clientCertificate = this.certificateStorage.getClientCertificate(this.identifier);
+            this.logger.info('Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing.');
+
             this.pairingClient.sendPairingRequest(this.identifier, name, clientCertificate, systemPassword)
                 .pipe(
                     retryWhen(errors => errors.pipe(concatMap((e, i) => iif(() => i > pairingAttempts,
@@ -96,7 +100,6 @@ export class BoschSmartHomeBridge {
                             delay(pairingDelay))))))
                 )
                 .subscribe(value => {
-                    this.logger.info(JSON.stringify(value));
                     observer.next(value);
                     observer.complete();
                 }, error => {

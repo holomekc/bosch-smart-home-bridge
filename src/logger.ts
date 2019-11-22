@@ -67,34 +67,34 @@ export interface Logger {
  */
 export class DefaultLogger implements Logger {
     fine(message?: any, ...optionalParams: any[]): void {
-        DefaultLogger.log('debug', message, optionalParams);
+        DefaultLogger.log('debug', message, ...optionalParams);
     }
 
     debug(message?: any, ...optionalParams: any[]): void {
-        DefaultLogger.log('debug', message, optionalParams);
+        DefaultLogger.log('debug', message, ...optionalParams);
     }
 
     info(message?: any, ...optionalParams: any[]): void {
-        DefaultLogger.log('info', message, optionalParams);
+        DefaultLogger.log('info', message, ...optionalParams);
     }
 
     warn(message?: any, ...optionalParams: any[]): void {
-        DefaultLogger.log('warn', message, optionalParams);
+        DefaultLogger.log('warn', message, ...optionalParams);
     }
 
     error(message?: any, ...optionalParams: any[]): void {
-        DefaultLogger.log('error', message, optionalParams);
+        DefaultLogger.log('error', message, ...optionalParams);
     }
 
     private static log(msgType: 'debug' | 'info' | 'warn' | 'error', message?: any, ...optionalParams: any[]) {
         if (message) {
-            if (optionalParams[0].length > 0) {
+            if (optionalParams.length > 0) {
                 console[msgType](message, optionalParams);
             } else {
                 console[msgType](message);
             }
         } else {
-            if (optionalParams[0].length > 0) {
+            if (optionalParams.length > 0) {
                 console[msgType](optionalParams);
             } else {
                 console[msgType]();

@@ -2,6 +2,7 @@ import {Observable} from 'rxjs';
 import * as https from 'https';
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
+import {BshbResponse} from "../bshb-response";
 
 /**
  * This class provides a simple call for all defined clients
@@ -37,7 +38,7 @@ export abstract class AbstractBshcClient {
      * @param options
      *        a set of options to specify the call regarding security.
      */
-    protected simpleCall<T>(port: number, method: string, path: string, data?: any, options?: { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any }): Observable<T> {
+    protected simpleCall<T>(port: number, method: string, path: string, data?: any, options?: { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any }): Observable<BshbResponse<T>> {
 
         const requestOptions: any = {};
 
@@ -92,13 +93,12 @@ export abstract class AbstractBshcClient {
         this.logger.fine('body:\n', postData ? postData : '');
         this.logger.fine('');
 
-        return new Observable(observer => {
+        return new Observable<BshbResponse<T>>(observer => {
             const req = https.request(requestOptions, res => {
                 this.logger.fine('');
                 this.logger.fine('response information:');
-                this.logger.fine('response:\nstatus:', res.statusCode);
+                this.logger.fine('status:', res.statusCode);
                 this.logger.fine('headers:', res.headers);
-
 
                 let chunks: any[] = [];
 
@@ -106,24 +106,23 @@ export abstract class AbstractBshcClient {
                     chunks.push(data);
                 }).on('end', () => {
 
-                    if (res.statusCode !== undefined && res.statusCode === 204) {
-                        observer.next(undefined);
-                    } else {
+                    let dataString = undefined;
+                    if (chunks.length > 0) {
                         const data = Buffer.concat(chunks);
-                        const dataString = data.toString('utf-8');
+                        dataString = data.toString('utf-8');
+                    }
 
-                        this.logger.fine('content: ', dataString);
-                        this.logger.fine('');
+                    this.logger.fine('content: ', dataString);
+                    this.logger.fine('');
 
-                        let parsedResponse;
-                        try{
-                            parsedResponse = JSON.parse(dataString);
-                        }catch (e) {
-                            // Could not parse JSON. Something went wrong. Returning string instead.
-                            parsedResponse = dataString;
+                    try{
+                        let parsedData = undefined;
+                        if (dataString) {
+                            parsedData = JSON.parse(dataString);
                         }
-
-                        observer.next(parsedResponse);
+                        observer.next(new BshbResponse<T>(res, parsedData));
+                    }catch (e) {
+                        observer.error(e);
                     }
                     observer.complete();
                 });
@@ -131,7 +130,11 @@ export abstract class AbstractBshcClient {
 
             req.on('error', err => {
                 this.logger.fine('error: ', err);
-                return observer.error(err);
+                try{
+                    return observer.error(err);
+                }finally{
+                    observer.complete();
+                }
             });
 
             if (postData) {
