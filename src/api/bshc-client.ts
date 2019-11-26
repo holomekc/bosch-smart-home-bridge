@@ -226,7 +226,8 @@ export class BshcClient extends AbstractBshcClient {
      * @param path
      *        device service path to use
      * @param data
-     *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request.
+     *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request
+     *        (see https://apidocs.bosch-smarthome.com/local/).
      * @return bshb response object
      */
     public putState(path: string, data: any): Observable<BshbResponse<any[]>> {
