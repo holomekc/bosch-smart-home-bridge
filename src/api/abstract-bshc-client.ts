@@ -67,8 +67,8 @@ export abstract class AbstractBshcClient {
         }
 
         if(options && options.certificateStorage && options.identifier) {
-            requestOptions.key = options.certificateStorage.getClientCertificateKey(options.identifier);
-            requestOptions.cert = options.certificateStorage.getClientCertificate(options.identifier);
+            requestOptions.key = options.certificateStorage.clientPrivateKey;
+            requestOptions.cert = options.certificateStorage.clientCert;
         }
 
         if (options && options.systemPassword) {

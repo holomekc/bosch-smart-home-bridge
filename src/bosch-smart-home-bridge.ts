@@ -1,10 +1,15 @@
-import {Logger} from './logger';
+import {DefaultLogger, Logger} from './logger';
 import {PairingClient} from './api/pairing-client';
 import {concatMap, delay, retryWhen, tap} from 'rxjs/operators';
 import {iif, Observable, of, throwError} from 'rxjs';
 import {BshcClient} from './api/bshc-client';
 import {CertificateStorage} from './certificate-storage';
 import {BshbResponse} from "./bshb-response";
+import {BoschSmartHomeBridgeBuilder} from "./builder/bosch-smart-home-bridge-builder";
+import {Host} from "./builder/host";
+import {Identifier} from "./builder/identifier";
+import {ClientCert} from "./builder/client-cert";
+import {ClientKey} from "./builder/client-key";
 
 /**
  * The {@link BoschSmartHomeBridge} (BSHB) allows communication to Bosch Smart Home Controller (BSHC).
@@ -18,10 +23,14 @@ import {BshbResponse} from "./bshb-response";
  */
 export class BoschSmartHomeBridge {
 
-    private readonly certificateStorage: CertificateStorage;
+    private certificateStorage: CertificateStorage;
 
-    private readonly pairingClient: PairingClient;
-    private readonly bshcClient: BshcClient;
+    private pairingClient: PairingClient;
+    private bshcClient: BshcClient;
+
+    private host: string;
+    private identifier: string;
+    private logger: Logger;
 
     /**
      * Create a new instance for communication with BSHC
@@ -35,10 +44,16 @@ export class BoschSmartHomeBridge {
      * @param logger
      *        logger to use
      */
-    constructor(private host: string, private identifier: string, certPath: string, private logger: Logger) {
-        this.certificateStorage = new CertificateStorage(certPath, this.logger);
+    constructor(bshbBuilder: BoschSmartHomeBridgeBuilder) {
+        this.host = bshbBuilder.host;
+        this.identifier = bshbBuilder.identifier;
+        this.logger = bshbBuilder.logger;
+        this.certificateStorage = new CertificateStorage(bshbBuilder.clientCert, bshbBuilder.clientPrivateKey);
         this.pairingClient = new PairingClient(this.host, this.logger);
         this.bshcClient = new BshcClient(this.host, this.identifier, this.certificateStorage, this.logger);
+
+        bshbBuilder.withClientCert("");
+        bshbBuilder.withClientPrivateKey("");
     }
 
     /**
@@ -89,11 +104,8 @@ export class BoschSmartHomeBridge {
 
     private pairClient(name: string, systemPassword: string, pairingDelay: number, pairingAttempts: number): Observable<BshbResponse<{ url: string, token: string }>> {
         return new Observable(observer => {
-            this.certificateStorage.generateClientCertificate(this.identifier);
-            const clientCertificate = this.certificateStorage.getClientCertificate(this.identifier);
             this.logger.info('Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing.');
-
-            this.pairingClient.sendPairingRequest(this.identifier, name, clientCertificate, systemPassword)
+            this.pairingClient.sendPairingRequest(this.identifier, name, this.certificateStorage.clientCert, systemPassword)
                 .pipe(
                     retryWhen(errors => errors.pipe(concatMap((e, i) => iif(() => i > pairingAttempts,
                         throwError(e),
