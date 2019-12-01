@@ -1,15 +1,14 @@
 {
   "name": "bosch-smart-home-bridge",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build:ts": "tsc",
-    "build": "npm run build:ts",
-    "watch:ts": "tsc --watch",
-    "watch": "npm run watch:ts",
+    "clean": "rimraf dist && rimraf distTest",
+    "build:ts": "tsc -p tsconfig.json && tsc -p tsconfig.test.json",
+    "build": "npm run clean && npm run build:ts",
     "lint": "eslint --ext .ts src",
-    "test": "npm run build && node dist/test/test.js"
+    "test": "npm run build && node distTest/test/test.js"
   },
   "keywords": [
     "Bosch Smart Home",
@@ -41,6 +40,7 @@
     "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
-    "eslint": "^6.0.1"
+    "eslint": "^6.0.1",
+    "rimraf": "^3.0.0"
   }
 }
