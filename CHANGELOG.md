@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.3] - 2019-12-01
+### Changed
+- typescript export of relevant classes improved
+
 ## [0.2.2] - 2019-12-01
 ### Fixed
 - fixed issue with npm resources are not updated correctly
