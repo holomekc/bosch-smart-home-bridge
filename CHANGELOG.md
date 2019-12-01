@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2019-12-01
+### Fixed
+- fixed issue with npm resources are not updated correctly
+
+### Changed
+- test is not part of dist anymore. But is placed in distTest instead
+
 ## [0.2.1] - 2019-12-01
 ### Fixed
 - fixed issue with npm resources are not updated correctly
