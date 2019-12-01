@@ -15,7 +15,7 @@ const extractArg = (index: number) => {
 // cert="..."
 // key="..."
 const host: string = extractArg(0);
-const identifier: string = extractArg(1);
+let identifier: string = extractArg(1);
 const password: string = extractArg(2);
 const mac: string = extractArg(3);
 const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(4) + '\n-----END CERTIFICATE-----';
@@ -27,6 +27,7 @@ const certificate = {
 };
 
 // or generate it
+// identifier = BshbUtils.generateIdentifier();
 // const certificate = BshbUtils.generateClientCertificate(BshbUtils.generateIdentifier());
 
 const bshb = BoschSmartHomeBridgeBuilder.builder()
