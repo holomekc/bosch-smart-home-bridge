@@ -4,13 +4,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:ts": "tsc",
+    "clean": "rimraf dist && rimraf distTest",
+    "build:ts": "tsc -p tsconfig.json && tsc -p tsconfig.test.json",
     "build": "npm run clean && npm run build:ts",
-    "watch:ts": "tsc --watch",
-    "watch": "npm run watch:ts",
     "lint": "eslint --ext .ts src",
-    "test": "npm run build && node dist/test/test.js"
+    "test": "npm run build && node distTest/test/test.js"
   },
   "keywords": [
     "Bosch Smart Home",
