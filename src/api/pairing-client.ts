@@ -33,7 +33,7 @@ export class PairingClient extends AbstractBshcClient {
      * @param name
      *        name of the client (will be displayed in BSH app
      * @param certificate
-     *        Certificate to use (base64 encoded with header / footer)
+     *        CertificateDefinition to use (base64 encoded with header / footer)
      * @param systemPassword
      *        system password of BSHC
      */

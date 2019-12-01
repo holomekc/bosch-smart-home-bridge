@@ -1,7 +1,6 @@
 import {Host} from "./host";
 import {DefaultLogger, Logger} from "../logger";
 import {BoschSmartHomeBridge} from "../bosch-smart-home-bridge";
-import {Identifier} from "./identifier";
 import {ClientCert} from "./client-cert";
 import {ClientKey} from "./client-key";
 
@@ -11,10 +10,9 @@ import {ClientKey} from "./client-key";
  * @author Christopher Holomek
  * @since 28.11.2019
  */
-export class BoschSmartHomeBridgeBuilder implements Host, Identifier, ClientCert, ClientKey {
+export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey {
 
     private _host: string = undefined as unknown as string;
-    private _identifier: string = undefined as unknown as string;
     private _clientCert: string = undefined as unknown as string;
     private _clientPrivateKey: string = undefined as unknown as string;
     private _logger: Logger = new DefaultLogger();
@@ -42,18 +40,6 @@ export class BoschSmartHomeBridgeBuilder implements Host, Identifier, ClientCert
 
     public withHost(host: string): BoschSmartHomeBridgeBuilder {
         this._host = host;
-        return this;
-    }
-
-    /**
-     * Get unique identifier to use (during pairing or for communication). "oss_" prefix is added automatically.
-     */
-    get identifier(): string {
-        return this._identifier;
-    }
-
-    public withIdentifier(identifier: string): BoschSmartHomeBridgeBuilder {
-        this._identifier = identifier;
         return this;
     }
 
@@ -108,10 +94,6 @@ export class BoschSmartHomeBridgeBuilder implements Host, Identifier, ClientCert
     public build(): BoschSmartHomeBridge {
         if (!this.host) {
             throw new Error("host is a required property. withHost must be called with a suitable value.");
-        }
-
-        if (!this.identifier) {
-            throw new Error("identifier is a required property. withIdentifier must be called with a suitable value.");
         }
 
         if (!this.clientCert) {

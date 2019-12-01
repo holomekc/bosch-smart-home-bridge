@@ -1,8 +1,8 @@
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
-import {EMPTY, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
-import {map, switchMap} from "rxjs/operators";
+import {map} from "rxjs/operators";
 import {BshbResponse} from "../bshb-response";
 
 /**
@@ -22,21 +22,18 @@ export class BshcClient extends AbstractBshcClient {
      *
      * @param host
      *        host name / ip address of BSHC
-     * @param identifier
-     *        identifier of certificate to use during calls
      * @param certificateStorage
      *        instance of certificate storage
      * @param logger
      *        logger to use
      */
-    constructor(host: string, private identifier: string, private certificateStorage: CertificateStorage, logger: Logger) {
+    constructor(host: string, private certificateStorage: CertificateStorage, logger: Logger) {
         super(host, logger);
     }
 
-    private getOptions(): { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any } {
+    private getOptions(): { certificateStorage?: CertificateStorage, systemPassword?: string, requestOptions?: any } {
         return {
-            certificateStorage: this.certificateStorage,
-            identifier: this.identifier
+            certificateStorage: this.certificateStorage
         }
     }
 

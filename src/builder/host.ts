@@ -1,4 +1,4 @@
-import {Identifier} from "./identifier";
+import {ClientCert} from "./client-cert";
 
 /**
  * Part of {@link BoschSmartHomeBridgeBuilder} to make sure that required properties are set.
@@ -13,5 +13,5 @@ export interface Host {
      * Set host name / ip address of BSHC
      * @param host name / ip address of BSHC
      */
-    withHost(host: string): Identifier;
+    withHost(host: string): ClientCert;
 }

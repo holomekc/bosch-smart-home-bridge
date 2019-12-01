@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "rxjs": "^6.5.3",
+    "selfsigned": "^1.10.7",
     "typescript": "^3.6.3",
     "uuid": "^3.3.3"
   },

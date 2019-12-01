@@ -38,7 +38,8 @@ export abstract class AbstractBshcClient {
      * @param options
      *        a set of options to specify the call regarding security.
      */
-    protected simpleCall<T>(port: number, method: string, path: string, data?: any, options?: { certificateStorage?: CertificateStorage, identifier?: string, systemPassword?: string, requestOptions?: any }): Observable<BshbResponse<T>> {
+    protected simpleCall<T>(port: number, method: string, path: string, data?: any,
+                            options?: { certificateStorage?: CertificateStorage, systemPassword?: string, requestOptions?: any }): Observable<BshbResponse<T>> {
 
         const requestOptions: any = {};
 
@@ -66,7 +67,7 @@ export abstract class AbstractBshcClient {
             });
         }
 
-        if(options && options.certificateStorage && options.identifier) {
+        if(options && options.certificateStorage) {
             requestOptions.key = options.certificateStorage.clientPrivateKey;
             requestOptions.cert = options.certificateStorage.clientCert;
         }
