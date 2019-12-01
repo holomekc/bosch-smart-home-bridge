@@ -101,7 +101,7 @@ export class BoschSmartHomeBridge {
                 .pipe(
                     retryWhen(errors => errors.pipe(concatMap((e, i) => iif(() => i > pairingAttempts,
                         throwError(e),
-                        of(e).pipe(tap(() => this.logger.warn('Could not pair client. Did you press the paring button?')),
+                        of(e).pipe(tap(() => this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${e}`)),
                             delay(pairingDelay))))))
                 )
                 .subscribe(value => {

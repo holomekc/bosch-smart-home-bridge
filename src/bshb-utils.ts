@@ -12,7 +12,8 @@ export class BshbUtils {
      *        unique identifier (uuid)
      */
     public static generateClientCertificate(identifier: string): CertificateDefinition {
-        return selfsigned.generate(null, {keySize: 2048, clientCertificate: true, clientCertificateCN: identifier});
+        return selfsigned.generate(null,
+            {keySize: 2048, clientCertificate: true, clientCertificateCN: identifier, algorithm: 'sha256'});
     }
 
     /**

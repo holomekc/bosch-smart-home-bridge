@@ -21,14 +21,14 @@ const mac: string = extractArg(3);
 const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(4) + '\n-----END CERTIFICATE-----';
 const clientPrivateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' + extractArg(5) + '\n-----END RSA PRIVATE KEY-----';
 
-const certificate = {
+let certificate = {
     clientcert: clientCert,
     clientprivate: clientPrivateKey
 };
 
-// or generate it
+// or generate it:
 // identifier = BshbUtils.generateIdentifier();
-// const certificate = BshbUtils.generateClientCertificate(BshbUtils.generateIdentifier());
+// certificate = BshbUtils.generateClientCertificate(BshbUtils.generateIdentifier());
 
 const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withHost(host)
