@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2019-12-01
+### Fixed
+- fixed issue with npm resources are not updated correctly
+
 ## [0.2.0] - 2019-12-01
 ### Added
 - utils class to help with certificate and identifier generation
