@@ -1,91 +1,40 @@
 import {Logger} from './logger';
-import * as fs from 'fs';
-import {CertificateGenerator} from './certificate-generator';
 
 /**
- * This class handles the client certificates which are placed in a directory and named after the unique identifier of
- * a client. So basically:
- * <identifier>.pem
- * <identifier>-key.pem
+ * This class is a container for client certificate and private key
  *
  * @author Christopher Holomek
  * @since 26.09.2019
  */
 export class CertificateStorage {
 
-    private certificateGenerator: CertificateGenerator;
-
-    private certificateCache = new Map<string, string>();
-    private keyCache = new Map<string, string>();
+    private readonly _clientCert: string = undefined as unknown as string;
+    private readonly _clientPrivateKey: string = undefined as unknown as string;
 
     /**
      * Create a new instance
      *
-     * @param certPath
-     *        absolute path of directory where certificates are placed or will be generated to
-     * @param logger
-     *        logger to use
+     * @param clientCert
+     *        client certificate base64 encoded
+     * @param clientPrivateKey
+     *        client private key base64 encoded
      */
-    constructor(private certPath: string, private logger: Logger) {
-        this.certificateGenerator = new CertificateGenerator(this.certPath, this.logger);
+    constructor(clientCert: string, clientPrivateKey: string) {
+        this._clientCert = clientCert;
+        this._clientPrivateKey = clientPrivateKey;
     }
 
     /**
      * Get client certificate content as string
-     *
-     * @param identifier
-     *        unique identifier of client
      */
-    public getClientCertificate(identifier: string): string {
-        if (this.certificateCache.get(identifier)) {
-            return <string>this.certificateCache.get(identifier);
-        }
-
-        const path = `${this.certPath}/${identifier}.pem`;
-        if (!fs.existsSync(path)) {
-            this.logger.warn(`Could not find client certificate for identifier: ${identifier}.`);
-            return '';
-        }
-
-        this.certificateCache.set(identifier, fs.readFileSync(path, 'utf-8'));
-
-        return <string>this.certificateCache.get(identifier);
+    get clientCert(): string {
+        return this._clientCert;
     }
 
     /**
      * Get client certificate key as string
-     *
-     * @param identifier
-     *        unique identifier of client
      */
-    public getClientCertificateKey(identifier: string): string {
-        if (this.keyCache.get(identifier)) {
-            return <string>this.keyCache.get(identifier);
-        }
-
-        const path = `${this.certPath}/${identifier}-key.pem`;
-        if (!fs.existsSync(path)) {
-            this.logger.warn(`Could not find client certificate key for identifier: ${identifier}.`);
-            return '';
-        }
-        this.keyCache.set(identifier, fs.readFileSync(path, 'utf-8'));
-
-        return <string>this.keyCache.get(identifier);
+    get clientPrivateKey(): string {
+        return this._clientPrivateKey;
     }
-
-    public generateClientCertificate(identifier: string) {
-        const path = `${this.certPath}/${identifier}.pem`;
-        this.generateClientCertificateIfNeeded(path, identifier);
-    }
-
-    private generateClientCertificateIfNeeded(path: string, identifier: string) {
-        if (!fs.existsSync(path)) {
-            this.logger.info(`certificate for identifier ${identifier} not found. Creating new client certificate.`);
-            this.certificateGenerator.createNewCertificate(identifier);
-            this.logger.info('certificate creation successful');
-        } else {
-            this.logger.info(`certificate for identifier ${identifier} found. Skip certificate generation`);
-        }
-    }
-
 }

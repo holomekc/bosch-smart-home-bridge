@@ -1,18 +1,44 @@
-import {BoschSmartHomeBridge, DefaultLogger} from "../src";
 import {catchError, switchMap} from "rxjs/operators";
 import {BehaviorSubject, EMPTY} from "rxjs";
+import {BoschSmartHomeBridgeBuilder} from "../src/builder/bosch-smart-home-bridge-builder";
+import {BshbUtils} from "../src/bshb-utils";
 
-const host: string = process.argv[2];
-const identifier: string = process.argv[3];
-const certPath: string = process.argv[4];
-const password: string = process.argv[5];
-const mac: string = process.argv[6];
+const extractArg = (index: number) => {
+    return process.argv[index + 2].substr(process.argv[index + 2].indexOf('=') + 1);
+};
 
-const bshb = new BoschSmartHomeBridge(host, identifier, certPath, new DefaultLogger());
+// Define arguments like this and also in that order:
+// host="..."
+// identifier="..."
+// password="..."
+// mac="..."
+// cert="..."
+// key="..."
+const host: string = extractArg(0);
+let identifier: string = extractArg(1);
+const password: string = extractArg(2);
+const mac: string = extractArg(3);
+const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(4) + '\n-----END CERTIFICATE-----';
+const clientPrivateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' + extractArg(5) + '\n-----END RSA PRIVATE KEY-----';
+
+let certificate = {
+    clientcert: clientCert,
+    clientprivate: clientPrivateKey
+};
+
+// or generate it:
+// identifier = BshbUtils.generateIdentifier();
+// certificate = BshbUtils.generateClientCertificate(BshbUtils.generateIdentifier());
+
+const bshb = BoschSmartHomeBridgeBuilder.builder()
+    .withHost(host)
+    .withClientCert(certificate.clientcert)
+    .withClientPrivateKey(certificate.clientprivate)
+    .build();
 
 const pollingTrigger = new BehaviorSubject(true);
 
-bshb.pairIfNeeded('bshb', password).pipe(catchError(err => {
+bshb.pairIfNeeded('bshb', identifier, password).pipe(catchError(err => {
     console.log("Test Result error:");
     console.log(err);
     return EMPTY;
@@ -43,7 +69,7 @@ bshb.pairIfNeeded('bshb', password).pipe(catchError(err => {
                 console.log(info.parsedResponse.result);
             }, error => {
                 // Error: we want to keep polling. So true
-                console.log("errorPolling");
+                console.log("errorPolling", error);
                 pollingTrigger.next(true);
             }, () => {
                 // Complete: we want to keep polling. So true

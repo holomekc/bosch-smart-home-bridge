@@ -15,23 +15,29 @@ Allows communication to Bosch Smart Home Controller (BSHC)
 
 ## Getting started
 
-You need to create a new instance of BoschSmartHomeBridge (BSHB). Therefore, you need:
+You need to create a new instance of BoschSmartHomeBridge (BSHB). Therefore, you need to use BoschSmartHomeBridgeBuilder.
+The builder will force you to set every mandatory properties:
 * host name / ip address of BSHC
-* a unique identifier for the new client (uuid is ok but can be any string)
-* absolute path to a directory where client certificates are located or will be generated to
-* a logger which implements the interface which is defined in this library
+* client certificate (base64 encoded)
+* client private key (base64 encoded, 2048bit)
+* a logger which implements the interface which is defined in this library (optional)
 ```typescript
-const bshb = new BoschSmartHomeBridge('192.168.0.10', 
-                                      '0fdbe4b9-5580-49f6-9f86-c8a9bfa5ae71',
-                                      '/absolute/path', new DefaultLogger());
+const identifier = BshbUtils.generateIdentifier();
+const certificate = BshbUtils.generateClientCertificate(identifier);
+const bshb = BoschSmartHomeBridgeBuilder.builder()
+    .withHost('192.168.0.10')
+    .withClientCert(certificate.clientcert)
+    .withClientPrivateKey(certificate.clientprivate)
+    .build();
 ```
 
 ## Pairing
 Then you need to start the pairing process. Therefore, you need:
 * name of the client
+* a unique identifier for the new client (uuid is ok but can be any string)
 * system password of BSHC
 ```typescript
-bshb.pairIfNeeded('name', 'systemPassword');
+bshb.pairIfNeeded('name', identifier, 'systemPassword');
 ```
 
 ## Communication
