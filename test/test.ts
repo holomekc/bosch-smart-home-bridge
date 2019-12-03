@@ -22,18 +22,18 @@ const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(4) + '\n
 const clientPrivateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' + extractArg(5) + '\n-----END RSA PRIVATE KEY-----';
 
 let certificate = {
-    clientcert: clientCert,
-    clientprivate: clientPrivateKey
+    cert: clientCert,
+    private: clientPrivateKey
 };
 
 // or generate it:
 // identifier = BshbUtils.generateIdentifier();
-// certificate = BshbUtils.generateClientCertificate(BshbUtils.generateIdentifier());
+// certificate = BshbUtils.generateClientCertificate(identifier);
 
 const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withHost(host)
-    .withClientCert(certificate.clientcert)
-    .withClientPrivateKey(certificate.clientprivate)
+    .withClientCert(certificate.cert)
+    .withClientPrivateKey(certificate.private)
     .build();
 
 const pollingTrigger = new BehaviorSubject(true);
