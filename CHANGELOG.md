@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.4] - 2019-12-01
+### Changed
+- remove mac from polling which is not needed
+- adjust client certificate generation and remove identifier which is not needed
+- improved error handling
+- workaround for stuck http request and BSHC restart. Especially for long polling
+- adjust test
+- adjust README.md
+
 ## [0.2.3] - 2019-12-01
 ### Changed
 - typescript export of relevant classes improved

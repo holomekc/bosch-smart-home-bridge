@@ -2,8 +2,12 @@ import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
 import {Observable, of} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
-import {map} from "rxjs/operators";
+import {map, tap} from "rxjs/operators";
 import {BshbResponse} from "../bshb-response";
+import {BshbCallOptions} from "../bshb-call-options";
+import {PollingResponse} from "../model/polling-response";
+import {BshbError} from "../error/bshb-error";
+import {BshbErrorType} from "../error/bshb-error-type";
 
 /**
  * This client contains some basic calls which are available to contact Bosch Smart Home Controller (BSHC)
@@ -31,7 +35,7 @@ export class BshcClient extends AbstractBshcClient {
         super(host, logger);
     }
 
-    private getOptions(): { certificateStorage?: CertificateStorage, systemPassword?: string, requestOptions?: any } {
+    private getOptions(): { certificateStorage?: CertificateStorage, systemPassword?: string, bshbCallOptions?: BshbCallOptions } {
         return {
             certificateStorage: this.certificateStorage
         }
@@ -93,7 +97,7 @@ export class BshcClient extends AbstractBshcClient {
                 });
                 return result;
             }));
-        }else {
+        } else {
             return of(<string[]>[]);
         }
     }
@@ -248,22 +252,61 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/subscribe',
-            'params': [ 'com/bosch/sh/remote/*', null ] // we subscribe to all topics
+            'params': ['com/bosch/sh/remote/*', null] // we subscribe to all topics
         });
     }
+
+    /**
+     * Start long polling after subscription. Request is kept open for 30 seconds.
+     *
+     * @param subscriptionId
+     *        identifier from subscription request
+     *
+     * @param subscriptionId
+     */
+    public longPolling(subscriptionId: string): Observable<BshbResponse<{ result: any[], jsonrpc: string }>> ;
+
+    /**
+     * Start long polling after subscription. Time a request is kept open can be specified by timeout value.
+     * This time is transmitted to BSHC and will be considered by it.
+     * Actual client timeout will be extended by 1s in favour of network delays.
+     *
+     * @param subscriptionId
+     *        identifier from subscription request
+     * @param timeout
+     *        time (ms) for how long the request is kept open. Default is 30000 ms
+     */
+    public longPolling(subscriptionId: string, timeout: number): Observable<BshbResponse<{ result: any[], jsonrpc: string }>>;
 
     /**
      * Start long polling after subscription
      *
      * @param subscriptionId
      *        identifier from subscription request
+     * @param timeout
+     *        time (ms) for how long the request is kept open. Default is 30000 ms
      */
-    public longPolling(subscriptionId: string): Observable<BshbResponse<{ result: any[], jsonrpc: string }>> {
-        return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+    public longPolling(subscriptionId: string, timeout?: number): Observable<BshbResponse<PollingResponse>> {
+        if (timeout === null || typeof timeout === 'undefined') {
+            timeout = 30000;
+        }
+        return this.call<PollingResponse>
+        (BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/longPoll',
-            'params': [ subscriptionId, 30 ]
-        });
+            'params': [subscriptionId, timeout / 1000]
+        }, {
+            // We do that because node http does not recognize that bshc is gone.
+            // Request would be stuck forever which we do not want
+            // this is the only option I could find to get notified if no something went wrong during polling
+            // 1s due to network delays.
+            timeout: timeout + 1000
+        }).pipe(tap(response => {
+            if (response && response.parsedResponse && response.parsedResponse.error) {
+                throw new BshbError('error during polling: ' + response.parsedResponse.error,
+                    BshbErrorType.POLLING)
+            }
+        }));
     }
 
     /**
@@ -276,7 +319,7 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/unsubscribe',
-            'params': [ subscriptionId ]
+            'params': [subscriptionId]
         });
     }
 
@@ -290,12 +333,12 @@ export class BshcClient extends AbstractBshcClient {
      *        url path to use
      * @param data
      *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request.
-     * @param requestOptions
+     * @param bshbCallOptions
      *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
-    public call<T>(port: number, method: string, path: string, data?: any, requestOptions?: any): Observable<BshbResponse<T>> {
+    public call<T>(port: number, method: string, path: string, data?: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<T>> {
         let options = this.getOptions();
-        options.requestOptions = requestOptions;
+        options.bshbCallOptions = bshbCallOptions;
         return this.simpleCall(port, method, path, data, options);
     }
 }

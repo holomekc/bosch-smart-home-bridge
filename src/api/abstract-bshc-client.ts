@@ -1,8 +1,12 @@
-import {Observable} from 'rxjs';
+import {Observable, Subscriber} from 'rxjs';
 import * as https from 'https';
+import {RequestOptions} from 'https';
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
 import {BshbResponse} from "../bshb-response";
+import {BshbError} from "../error/bshb-error";
+import {BshbErrorType} from "../error/bshb-error-type";
+import {BshbCallOptions} from "../bshb-call-options";
 
 /**
  * This class provides a simple call for all defined clients
@@ -13,6 +17,8 @@ import {BshbResponse} from "../bshb-response";
 export abstract class AbstractBshcClient {
 
     protected static PAIR_PORT = 8443;
+
+    private static DEFAULT_TIMEOUT = 3000;
 
     /**
      * Needed parameters for a {@link AbstractBshcClient}
@@ -39,16 +45,13 @@ export abstract class AbstractBshcClient {
      *        a set of options to specify the call regarding security.
      */
     protected simpleCall<T>(port: number, method: string, path: string, data?: any,
-                            options?: { certificateStorage?: CertificateStorage, systemPassword?: string, requestOptions?: any }): Observable<BshbResponse<T>> {
+                            options?: {
+                                certificateStorage?: CertificateStorage, systemPassword?: string,
+                                bshbCallOptions?: BshbCallOptions
+                            }): Observable<BshbResponse<T>> {
 
-        const requestOptions: any = {};
-
-        if (options && options.requestOptions) {
-            Object.keys(options.requestOptions).forEach(key => {
-                requestOptions[key] = options.requestOptions[key];
-            })
-        }
-
+        const requestOptions: RequestOptions = {};
+        requestOptions.timeout = AbstractBshcClient.DEFAULT_TIMEOUT;
         requestOptions.hostname = this.host;
         requestOptions.port = port;
         requestOptions.path = path;
@@ -61,13 +64,13 @@ export abstract class AbstractBshcClient {
         requestOptions.headers['Content-Type'] = 'application/json';
         requestOptions.headers['Accept'] = 'application/json';
 
-        if (options && options.requestOptions) {
-            Object.keys(options.requestOptions).forEach(key => {
-                requestOptions[key] = options.requestOptions[key];
+        if (options && options.bshbCallOptions && options.bshbCallOptions) {
+            Object.keys(options.bshbCallOptions).forEach(key => {
+                (requestOptions as any)[key] = (options.bshbCallOptions as any)[key];
             });
         }
 
-        if(options && options.certificateStorage) {
+        if (options && options.certificateStorage) {
             requestOptions.key = options.certificateStorage.clientPrivateKey;
             requestOptions.cert = options.certificateStorage.clientCert;
         }
@@ -116,32 +119,62 @@ export abstract class AbstractBshcClient {
                     this.logger.fine('content: ', dataString);
                     this.logger.fine('');
 
-                    try{
+                    try {
                         let parsedData = undefined;
                         if (dataString) {
                             parsedData = JSON.parse(dataString);
                         }
                         observer.next(new BshbResponse<T>(res, parsedData));
-                    }catch (e) {
-                        observer.error(e);
+                    } catch (e) {
+                        observer.error(new BshbError('error during parsing response from BSHC:',
+                            BshbErrorType.PARSING, e));
+                    } finally {
+                        observer.complete();
                     }
-                    observer.complete();
+                }).on('error', err => {
+                    this.handleError(observer, BshbErrorType.ERROR, err);
                 });
             });
 
+            // error and socket handling
             req.on('error', err => {
-                this.logger.fine('error: ', err);
-                try{
-                    return observer.error(err);
-                }finally{
-                    observer.complete();
-                }
+                this.handleError(observer, BshbErrorType.ERROR, err);
+            }).on('abort', () => {
+                this.handleError(observer, BshbErrorType.ABORT, 'call to BSHC aborted by client');
+            }).on('timeout', () => {
+                this.handleError(observer, BshbErrorType.TIMEOUT, 'timeout during call to BSHC');
+            }).on('socket', socket => {
+                socket.on('timeout', () => {
+                    this.handleError(observer, BshbErrorType.TIMEOUT, 'timeout during call to BSHC');
+                }).on('error', err => {
+                    this.handleError(observer, BshbErrorType.ERROR, err);
+                }).on('close', had_error => {
+                    if (had_error) {
+                        this.handleError(observer, BshbErrorType.ERROR, had_error);
+                    }
+                });
             });
 
             if (postData) {
                 req.write(postData);
             }
+
             req.end();
         });
+    }
+
+    private handleError<T>(observer: Subscriber<BshbResponse<T>>, errorType: BshbErrorType, errorDetails: any): void {
+        this.logger.error('error during call to BSHC: ', errorDetails);
+        try {
+            if (errorDetails instanceof Error) {
+                observer.error(new BshbError('error during call to BSHC: ', errorType, errorDetails));
+            } else if (typeof errorDetails === 'string') {
+                observer.error(new BshbError(errorDetails, errorType));
+            } else {
+                observer.error(new BshbError('error during call to BSHC', errorType));
+            }
+        } finally {
+            observer.complete();
+        }
     }
 }
