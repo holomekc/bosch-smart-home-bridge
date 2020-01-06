@@ -143,16 +143,6 @@ export abstract class AbstractBshcClient {
                 this.handleError(observer, BshbErrorType.ABORT, 'call to BSHC aborted by client');
             }).on('timeout', () => {
                 this.handleError(observer, BshbErrorType.TIMEOUT, 'timeout during call to BSHC');
-            }).on('socket', socket => {
-                socket.on('timeout', () => {
-                    this.handleError(observer, BshbErrorType.TIMEOUT, 'timeout during call to BSHC');
-                }).on('error', err => {
-                    this.handleError(observer, BshbErrorType.ERROR, err);
-                }).on('close', had_error => {
-                    if (had_error) {
-                        this.handleError(observer, BshbErrorType.ERROR, had_error);
-                    }
-                });
             });
 
             if (postData) {

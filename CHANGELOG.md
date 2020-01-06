@@ -1,14 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.2.4] - 2019-12-01
+## [0.2.5] - 2020-01-06
 ### Changed
-- remove mac from polling which is not needed
-- adjust client certificate generation and remove identifier which is not needed
+- adjust error handling so that errors are not handled multiple times.
+
+## [0.2.4] - 2020-01-06
+### Changed
+- adjust client certificate generation
 - improved error handling
 - workaround for stuck http request and BSHC restart. Especially for long polling
-- adjust test
-- adjust README.md
+- adjust test and documentation
+
+### Removed
+- remove mac from polling which is not needed
+- remove identifier from certificate generation
 
 ## [0.2.3] - 2019-12-01
 ### Changed
