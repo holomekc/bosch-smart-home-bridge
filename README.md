@@ -22,8 +22,7 @@ The builder will force you to set every mandatory properties:
 * client private key (base64 encoded, 2048bit)
 * a logger which implements the interface which is defined in this library (optional)
 ```typescript
-const identifier = BshbUtils.generateIdentifier();
-const certificate = BshbUtils.generateClientCertificate(identifier);
+const certificate = BshbUtils.generateClientCertificate();
 const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withHost('192.168.0.10')
     .withClientCert(certificate.clientcert)
@@ -37,6 +36,7 @@ Then you need to start the pairing process. Therefore, you need:
 * a unique identifier for the new client (uuid is ok but can be any string)
 * system password of BSHC
 ```typescript
+const identifier = BshbUtils.generateIdentifier();
 bshb.pairIfNeeded('name', identifier, 'systemPassword');
 ```
 
@@ -51,10 +51,8 @@ bshb.getBshcClient()
 If you are interested in updates from bshc you can use long polling. Therefore, you need to do the following:
 
 ```typescript
-const mac = 'xx-xx-xx-xx-xx-xx';
-
-bshb.getBshcClient().subscribe(mac).subscribe(response => {
-        bshb.getBshcClient().longPolling(mac, response.parsedResponse.result).subscribe(info => {
+bshb.getBshcClient().subscribe().subscribe(response => {
+        bshb.getBshcClient().longPolling(response.parsedResponse.result).subscribe(info => {
             // do something with the information
             // also you need to call longPolling again after connection close
         });
@@ -63,7 +61,7 @@ bshb.getBshcClient().subscribe(mac).subscribe(response => {
 
 Do not forget to unsubscribe. E.g. in error case or on application end.
 ```typescript
-bshb.getBshcClient().unsubscribe(mac, response.parsedResponse.result).subscribe(() => {
+bshb.getBshcClient().unsubscribe(response.parsedResponse.result).subscribe(() => {
                 });
 ```
 
