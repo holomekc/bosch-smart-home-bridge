@@ -242,59 +242,41 @@ export class BshcClient extends AbstractBshcClient {
     /**
      * Subscribe to listen to notifications of bshc
      *
-     * @param bshcMac
-     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
      * @return an object which contains 'result' which is the subscriptionId and 'jsonrpc' which is the json-rpc version
      */
-    public subscribe(bshcMac: string): Observable<BshbResponse<{ result: string, jsonrpc: string }>> {
+    public subscribe(): Observable<BshbResponse<{ result: string, jsonrpc: string }>> {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/subscribe',
             'params': [ 'com/bosch/sh/remote/*', null ] // we subscribe to all topics
-        }, {
-            headers: {
-                'Gateway-ID': bshcMac
-            }
         });
     }
 
     /**
      * Start long polling after subscription
      *
-     * @param bshcMac
-     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
      * @param subscriptionId
      *        identifier from subscription request
      */
-    public longPolling(bshcMac: string, subscriptionId: string): Observable<BshbResponse<{ result: any[], jsonrpc: string }>> {
+    public longPolling(subscriptionId: string): Observable<BshbResponse<{ result: any[], jsonrpc: string }>> {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/longPoll',
             'params': [ subscriptionId, 30 ]
-        }, {
-            headers: {
-                'Gateway-ID': bshcMac
-            }
         });
     }
 
     /**
      * Stop subscription
      *
-     * @param bshcMac
-     *        mac of BSHC in format: xx-xx-xx-xx-xx-xx
      * @param subscriptionId
      *        identifier from subscription request
      */
-    public unsubscribe(bshcMac: string, subscriptionId: string): Observable<BshbResponse<{ result: null, jsonrpc: string }>> {
+    public unsubscribe(subscriptionId: string): Observable<BshbResponse<{ result: null, jsonrpc: string }>> {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/unsubscribe',
             'params': [ subscriptionId ]
-        }, {
-            headers: {
-                'Gateway-ID': bshcMac
-            }
         });
     }
 

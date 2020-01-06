@@ -8,12 +8,10 @@ export class BshbUtils {
 
     /**
      * Generate a client certificate for communication with BSHC
-     * @param identifier
-     *        unique identifier (uuid)
      */
-    public static generateClientCertificate(identifier: string): CertificateDefinition {
+    public static generateClientCertificate(): CertificateDefinition {
         return selfsigned.generate(null,
-            {keySize: 2048, clientCertificate: true, clientCertificateCN: identifier, algorithm: 'sha256'});
+            {keySize: 2048, clientCertificate: false, algorithm: 'sha256'});
     }
 
     /**

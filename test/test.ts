@@ -11,15 +11,13 @@ const extractArg = (index: number) => {
 // host="..."
 // identifier="..."
 // password="..."
-// mac="..."
 // cert="..."
 // key="..."
 const host: string = extractArg(0);
 let identifier: string = extractArg(1);
 const password: string = extractArg(2);
-const mac: string = extractArg(3);
-const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(4) + '\n-----END CERTIFICATE-----';
-const clientPrivateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' + extractArg(5) + '\n-----END RSA PRIVATE KEY-----';
+const clientCert: string = '-----BEGIN CERTIFICATE-----\n' + extractArg(3) + '\n-----END CERTIFICATE-----';
+const clientPrivateKey: string = '-----BEGIN RSA PRIVATE KEY-----\n' + extractArg(4) + '\n-----END RSA PRIVATE KEY-----';
 
 let certificate = {
     cert: clientCert,
@@ -28,7 +26,7 @@ let certificate = {
 
 // or generate it:
 // identifier = BshbUtils.generateIdentifier();
-// certificate = BshbUtils.generateClientCertificate(identifier);
+// certificate = BshbUtils.generateClientCertificate();
 
 const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withHost(host)
@@ -57,14 +55,14 @@ bshb.pairIfNeeded('bshb', identifier, password).pipe(catchError(err => {
     console.log("GetRooms:");
     console.log(getRoomsResponse.parsedResponse);
 
-    return bshb.getBshcClient().subscribe(mac);
+    return bshb.getBshcClient().subscribe();
 })).subscribe(response => {
     console.log("Subscribe response");
     console.log(response.parsedResponse);
 
     pollingTrigger.subscribe(keepPolling => {
         if (keepPolling) {
-            bshb.getBshcClient().longPolling(mac, response.parsedResponse.result).subscribe(info => {
+            bshb.getBshcClient().longPolling(response.parsedResponse.result).subscribe(info => {
                 console.log("Changes: ");
                 console.log(info.parsedResponse.result);
             }, error => {
@@ -77,7 +75,7 @@ bshb.pairIfNeeded('bshb', identifier, password).pipe(catchError(err => {
                 pollingTrigger.next(true);
             });
         } else {
-            bshb.getBshcClient().unsubscribe(mac, response.parsedResponse.result).subscribe(() => {
+            bshb.getBshcClient().unsubscribe(response.parsedResponse.result).subscribe(() => {
             });
         }
     });
