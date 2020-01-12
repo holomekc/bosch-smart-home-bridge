@@ -101,7 +101,7 @@ export class BoschSmartHomeBridge {
                 .pipe(
                     retryWhen(errors => errors.pipe(concatMap((e, i) => iif(() => i > pairingAttempts,
                         throwError(e),
-                        of(e).pipe(tap(() => this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${e}`)),
+                        of(e).pipe(tap(() => this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${e.cause}`)),
                             delay(pairingDelay))))))
                 )
                 .subscribe(value => {
@@ -113,7 +113,7 @@ export class BoschSmartHomeBridge {
                     observer.next(value);
                     observer.complete();
                 }, error => {
-                    this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error}`);
+                    this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error.cause}`);
                     observer.error(error);
                 });
         });

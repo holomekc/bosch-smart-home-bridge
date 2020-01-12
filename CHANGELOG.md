@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2020-01-12
+### Changed
+- activate server verification. Root ca is part of library now.
+- hostname verification modified so that it does not fail due to altname
+
 ## [0.2.5] - 2020-01-06
 ### Changed
 - adjust error handling so that errors are not handled multiple times.

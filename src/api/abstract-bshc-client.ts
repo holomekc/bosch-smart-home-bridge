@@ -7,6 +7,7 @@ import {BshbResponse} from "../bshb-response";
 import {BshbError} from "../error/bshb-error";
 import {BshbErrorType} from "../error/bshb-error-type";
 import {BshbCallOptions} from "../bshb-call-options";
+import {BshbUtils} from "../bshb-utils";
 
 /**
  * This class provides a simple call for all defined clients
@@ -56,7 +57,18 @@ export abstract class AbstractBshcClient {
         requestOptions.port = port;
         requestOptions.path = path;
         requestOptions.method = method;
-        requestOptions.rejectUnauthorized = false; // self signed cert ignored of BSHC. Maybe we could add an option to set the caCert as well which would make it more secure.
+        requestOptions.rejectUnauthorized = true;
+        (requestOptions as any).checkServerIdentity = (host: string) => {
+            // we cannot use tls.checkServerIdentity because it would fail altname check
+            host = '' + host;
+
+            if (host === this.host) {
+                return undefined;
+            } else {
+                throw new BshbError(`Hostname verification failed. server=${host} expected=${this.host}`, BshbErrorType.ERROR);
+            }
+        };
+        requestOptions.ca = BshbUtils.getBoschSmartHomeControllerRootCa();
         if (!requestOptions.headers) {
             requestOptions.headers = {};
         }

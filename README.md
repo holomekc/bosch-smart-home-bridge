@@ -25,8 +25,8 @@ The builder will force you to set every mandatory properties:
 const certificate = BshbUtils.generateClientCertificate();
 const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withHost('192.168.0.10')
-    .withClientCert(certificate.clientcert)
-    .withClientPrivateKey(certificate.clientprivate)
+    .withClientCert(certificate.cert)
+    .withClientPrivateKey(certificate.private)
     .build();
 ```
 
