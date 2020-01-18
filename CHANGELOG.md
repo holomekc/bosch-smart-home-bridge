@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2020-01-18
+### Added
+- get / delete messages added
+
 ## [0.2.6] - 2020-01-12
 ### Changed
 - activate server verification. Root ca is part of library now.

@@ -244,6 +244,44 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get all messages
+     * @return bshb response object
+     */
+    public getMessages(): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages`, null, this.getOptions());
+    }
+
+    /**
+     * Delete all specified message ids
+     * @param ids
+     *        an array of identifier of messages
+     * @return bshb response object
+     */
+    public deleteMessages(ids: string[]): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/messages/batchDelete`, ids, this.getOptions());
+    }
+
+    /**
+     * Get the specified message
+     * @param id
+     *        identifier of a message
+     * @return bshb response object
+     */
+    public getMessage(id: string): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages/${id}`, null, this.getOptions());
+    }
+
+    /**
+     * Delete a specified message
+     * @param id
+     *        identifier of a message
+     * @return bshb response object
+     */
+    public deleteMessage(id: string): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'DELETE', `/${BshcClient.PATH_PREFIX}/messages/${id}`, null, this.getOptions());
+    }
+
+    /**
      * Subscribe to listen to notifications of bshc
      *
      * @return an object which contains 'result' which is the subscriptionId and 'jsonrpc' which is the json-rpc version
