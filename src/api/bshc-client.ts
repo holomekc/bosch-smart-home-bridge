@@ -75,7 +75,7 @@ export class BshcClient extends AbstractBshcClient {
      * @return bshb response object
      */
     public getDevices(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
-        return this.getDevice('undefined', bshbCallOptions);
+        return this.getDevice(undefined, bshbCallOptions);
     }
 
     /**

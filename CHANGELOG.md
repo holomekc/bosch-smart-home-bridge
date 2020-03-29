@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.2.8] - 2020-01-18
+## [0.2.9] - 2020-03-29
+### Fixed
+- fix error in getDevices method where undefined was mistakenly specified as string
+
+## [0.2.8] - 2020-03-29
 ### Added
 - add options to nearly every client methods to provide more flexibility.
 
