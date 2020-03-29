@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.8] - 2020-01-18
+### Added
+- add options to nearly every client methods to provide more flexibility.
+
 ## [0.2.7] - 2020-01-18
 ### Added
 - get / delete messages added

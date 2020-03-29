@@ -35,34 +35,47 @@ export class BshcClient extends AbstractBshcClient {
         super(host, logger);
     }
 
-    private getOptions(): { certificateStorage?: CertificateStorage, systemPassword?: string, bshbCallOptions?: BshbCallOptions } {
-        return {
-            certificateStorage: this.certificateStorage
+    private getOptions(bshbCallOptions?: BshbCallOptions): { certificateStorage?: CertificateStorage, systemPassword?: string, bshbCallOptions?: BshbCallOptions } {
+        if (bshbCallOptions) {
+            return {
+                certificateStorage: this.certificateStorage,
+                bshbCallOptions: bshbCallOptions
+            };
+        } else {
+            return {
+                certificateStorage: this.certificateStorage
+            };
         }
     }
 
     /**
      * Get information about BSHC
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getInformation(): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.PAIR_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/information`, null, this.getOptions());
+    public getInformation(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.PAIR_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/information`, null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get all rooms stored
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getRooms(): Observable<BshbResponse<any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/rooms`, null, this.getOptions());
+    public getRooms(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/rooms`, null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Same as {@link BshcClient#getDevice()}
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDevices(): Observable<BshbResponse<any[]>> {
-        return this.getDevice();
+    public getDevices(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.getDevice('undefined', bshbCallOptions);
     }
 
     /**
@@ -73,21 +86,28 @@ export class BshcClient extends AbstractBshcClient {
 
     /**
      * Get a specified device
-     * @param deviceId identifier of the device interested in
+     * @param deviceId
+     *        identifier of the device interested in. If undefined all devices are returned
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDevice(deviceId: string): Observable<BshbResponse<any>>;
+    public getDevice(deviceId: string | undefined, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>>;
 
-    public getDevice(deviceId?: string): Observable<BshbResponse<any | any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`, null, this.getOptions());
+    public getDevice(deviceId?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any | any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET',
+            `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get all available service ids of a specified device
      * @param deviceId identifier of a device
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return a string array which contains all service ids of a device
      */
-    public getDeviceServiceIds(deviceId: string): Observable<string[]> {
+    public getDeviceServiceIds(deviceId: string, bshbCallOptions?: BshbCallOptions): Observable<string[]> {
         if (deviceId) {
             return this.getDeviceServices(deviceId).pipe(map(services => {
                 const result: string[] = [];
@@ -104,18 +124,24 @@ export class BshcClient extends AbstractBshcClient {
 
     /**
      * Get supported device types
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getSupportedDeviceTypes(): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/configuration/supportedDeviceTypes`, null, this.getOptions());
+    public getSupportedDeviceTypes(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET',
+            `/${BshcClient.PATH_PREFIX}/configuration/supportedDeviceTypes`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get services of all devices
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDevicesServices(): Observable<BshbResponse<any[]>> {
-        return this.getDeviceServices();
+    public getDevicesServices(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.getDeviceServices(undefined, undefined, bshbCallOptions);
     }
 
     /**
@@ -135,19 +161,23 @@ export class BshcClient extends AbstractBshcClient {
      * Get all services of a specified device
      * @param deviceId identifier of the relevant device
      * @param serviceId <code>'all'</code> to get all services
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDeviceServices(deviceId: string, serviceId: 'all'): Observable<BshbResponse<any[]>>;
+    public getDeviceServices(deviceId: string | undefined, serviceId: 'all', bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>>;
 
     /**
      * Get a specified service of a specified device
      * @param deviceId identifier of the relevant device
      * @param serviceId identifier of a service
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDeviceServices(deviceId: string, serviceId: string): Observable<BshbResponse<any[]>>;
+    public getDeviceServices(deviceId: string | undefined, serviceId: string |undefined, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>>;
 
-    public getDeviceServices(deviceId?: string, serviceId?: string | 'all'): Observable<BshbResponse<any[]>> {
+    public getDeviceServices(deviceId?: string, serviceId?: string | 'all', bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
         let path = `/${BshcClient.PATH_PREFIX}/services`;
         if (deviceId) {
             path = `/${BshcClient.PATH_PREFIX}/devices/${deviceId}/services/`;
@@ -155,43 +185,55 @@ export class BshcClient extends AbstractBshcClient {
                 path += serviceId;
             }
         }
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get all scenarios
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getScenarios(): Observable<BshbResponse<any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/scenarios`, null, this.getOptions());
+    public getScenarios(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET',
+            `/${BshcClient.PATH_PREFIX}/scenarios`, null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Trigger the specified scenario
      * @param scenarioId
      *        identifier of a scenario
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public triggerScenario(scenarioId: string): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/scenarios/${scenarioId}/triggers`, null, this.getOptions());
+    public triggerScenario(scenarioId: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'POST',
+            `/${BshcClient.PATH_PREFIX}/scenarios/${scenarioId}/triggers`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get alarm state
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getAlarmState(): Observable<BshbResponse<any>> {
+    public getAlarmState(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         const path = '/devices/intrusionDetectionSystem/services/IntrusionDetectionControl/state';
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`, null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Set alarm state
      * @param armed
      *        <code>true</code> if alarm should be armed. Otherwise <code>false</code>
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public setAlarmState(armed: boolean): Observable<BshbResponse<any>> {
+    public setAlarmState(armed: boolean, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         let value;
         if (armed) {
             value = '"SYSTEM_ARMED"';
@@ -199,27 +241,32 @@ export class BshcClient extends AbstractBshcClient {
             value = '"SYSTEM_DISARMED"';
         }
         const data = `{"@type": "intrusionDetectionControlState","value": ${value}}`;
-        return this.putState('devices/intrusionDetectionSystem/services/IntrusionDetectionControl', data);
+        return this.putState('devices/intrusionDetectionSystem/services/IntrusionDetectionControl', data, bshbCallOptions);
     }
 
     /**
      * Get alarm state
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getPresenceSimulation(): Observable<BshbResponse<any>> {
+    public getPresenceSimulation(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         const path = '/devices/presenceSimulationService/services/PresenceSimulationConfiguration/state';
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`, null, this.getOptions());
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}${path}`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Set alarm state
      * @param enable
      *        <code>true</code> if presence is enabled. Otherwise <code>false</code>
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public setPresenceSimulation(enable: boolean): Observable<BshbResponse<any>> {
+    public setPresenceSimulation(enable: boolean, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         const data = `{"@type": "presenceSimulationConfigurationState","enabled": ${enable}}`;
-        return this.putState('devices/presenceSimulationService/services/PresenceSimulationConfiguration', data);
+        return this.putState('devices/presenceSimulationService/services/PresenceSimulationConfiguration', data, bshbCallOptions);
     }
 
     /**
@@ -229,56 +276,74 @@ export class BshcClient extends AbstractBshcClient {
      * @param data
      *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request
      *        (see https://apidocs.bosch-smarthome.com/local/).
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public putState(path: string, data: any): Observable<BshbResponse<any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/${path}/state`, data, this.getOptions());
+    public putState(path: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/${path}/state`, data,
+            this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get all connected clients
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getClients(): Observable<BshbResponse<any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/clients`, null, this.getOptions());
+    public getClients(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/clients`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get all messages
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getMessages(): Observable<BshbResponse<any[]>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages`, null, this.getOptions());
+    public getMessages(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Delete all specified message ids
      * @param ids
      *        an array of identifier of messages
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public deleteMessages(ids: string[]): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/messages/batchDelete`, ids, this.getOptions());
+    public deleteMessages(ids: string[], bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'POST',
+            `/${BshcClient.PATH_PREFIX}/messages/batchDelete`, ids, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Get the specified message
      * @param id
      *        identifier of a message
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getMessage(id: string): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages/${id}`, null, this.getOptions());
+    public getMessage(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/messages/${id}`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
      * Delete a specified message
      * @param id
      *        identifier of a message
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public deleteMessage(id: string): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'DELETE', `/${BshcClient.PATH_PREFIX}/messages/${id}`, null, this.getOptions());
+    public deleteMessage(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'DELETE', `/${BshcClient.PATH_PREFIX}/messages/${id}`,
+            null, this.getOptions(bshbCallOptions));
     }
 
     /**
@@ -375,8 +440,7 @@ export class BshcClient extends AbstractBshcClient {
      *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
     public call<T>(port: number, method: string, path: string, data?: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<T>> {
-        let options = this.getOptions();
-        options.bshbCallOptions = bshbCallOptions;
+        let options = this.getOptions(bshbCallOptions);
         return this.simpleCall(port, method, path, data, options);
     }
 }

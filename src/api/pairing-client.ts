@@ -3,6 +3,7 @@ import {Logger} from '../logger';
 import {Observable} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
 import {BshbResponse} from "../bshb-response";
+import {BshbCallOptions} from "../bshb-call-options";
 
 /**
  * This client is only used for the pairing of the client to Bosch Smart Home Controller.
@@ -36,14 +37,17 @@ export class PairingClient extends AbstractBshcClient {
      *        CertificateDefinition to use (base64 encoded with header / footer)
      * @param systemPassword
      *        system password of BSHC
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
-    public sendPairingRequest(identifier: string, name: string, certificate: string, systemPassword: string): Observable<BshbResponse<{ url: string, token: string }>> {
+    public sendPairingRequest(identifier: string, name: string, certificate: string, systemPassword: string,
+                              bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<{ url: string, token: string }>> {
         const clientData = new BoschClientData(name, identifier, certificate);
         const postData = JSON.stringify(clientData);
 
         return new Observable<BshbResponse<{ url: string, token: string; }>>(subscriber => {
             this.simpleCall<{ url: string, token: string; }>(PairingClient.PAIR_PORT, 'POST',
-                PairingClient.PAIR_PATH, postData, {systemPassword: systemPassword}).subscribe(value => {
+                PairingClient.PAIR_PATH, postData, {systemPassword: systemPassword, bshbCallOptions}).subscribe(value => {
                 subscriber.next(value);
                 subscriber.complete();
             }, error => {
