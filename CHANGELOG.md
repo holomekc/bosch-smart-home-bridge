@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.11] - 2020-04-01
+### Added
+- add missing response types
+
 ## [0.2.10] - 2020-04-01
 ### Added
 - open doors/windows method

@@ -350,7 +350,7 @@ export class BshcClient extends AbstractBshcClient {
      * Get status of windows/doors
      * @param bshbCallOptions
      */
-    public getOpenWindows(bshbCallOptions?: BshbCallOptions) {
+    public getOpenWindows(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/doors-windows/openwindows`,
             null, this.getOptions(bshbCallOptions));
     }
