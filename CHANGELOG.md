@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.10] - 2020-04-01
+### Added
+- open doors/windows method
+
 ## [0.2.9] - 2020-03-29
 ### Fixed
 - fix error in getDevices method where undefined was mistakenly specified as string

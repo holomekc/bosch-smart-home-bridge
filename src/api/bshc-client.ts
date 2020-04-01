@@ -347,6 +347,15 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get status of windows/doors
+     * @param bshbCallOptions
+     */
+    public getOpenWindows(bshbCallOptions?: BshbCallOptions) {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/doors-windows/openwindows`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
      * Subscribe to listen to notifications of bshc
      *
      * @return an object which contains 'result' which is the subscriptionId and 'jsonrpc' which is the json-rpc version
