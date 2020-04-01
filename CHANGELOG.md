@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.12] - 2020-04-01
+### Fixed
+- fixed npm
+
 ## [0.2.11] - 2020-04-01
 ### Added
 - add missing response types
