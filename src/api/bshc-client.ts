@@ -175,7 +175,7 @@ export class BshcClient extends AbstractBshcClient {
      *        define custom headers, etc. Some values may be overwritten. E.g. host
      * @return bshb response object
      */
-    public getDeviceServices(deviceId: string | undefined, serviceId: string |undefined, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>>;
+    public getDeviceServices(deviceId: string | undefined, serviceId: string | undefined, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>>;
 
     public getDeviceServices(deviceId?: string, serviceId?: string | 'all', bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
         let path = `/${BshcClient.PATH_PREFIX}/services`;
@@ -391,14 +391,30 @@ export class BshcClient extends AbstractBshcClient {
     public longPolling(subscriptionId: string, timeout: number): Observable<BshbResponse<{ result: any[], jsonrpc: string }>>;
 
     /**
+     * Start long polling after subscription. Time a request is kept open can be specified by timeout value.
+     * This time is transmitted to BSHC and will be considered by it.
+     * Actual client timeout will be extended by 1s in favour of network delays.
+     *
+     * @param subscriptionId
+     *        identifier from subscription request
+     * @param timeout
+     *        time (ms) for how long the request is kept open. Default is 30000 ms
+     * @param delay
+     *        delay (ms) for how the timeout is extended. So timeout + delay = connection timeout. Default is 1000 ms
+     */
+    public longPolling(subscriptionId: string, timeout: number, delay: number): Observable<BshbResponse<{ result: any[], jsonrpc: string }>>;
+
+    /**
      * Start long polling after subscription
      *
      * @param subscriptionId
      *        identifier from subscription request
      * @param timeout
      *        time (ms) for how long the request is kept open. Default is 30000 ms
+     * @param delay
+     *        delay (ms) for how the timeout is extended. So timeout + delay = connection timeout. Default is 1000 ms
      */
-    public longPolling(subscriptionId: string, timeout?: number): Observable<BshbResponse<PollingResponse>> {
+    public longPolling(subscriptionId: string, timeout?: number, delay?: number): Observable<BshbResponse<PollingResponse>> {
         if (timeout === null || typeof timeout === 'undefined') {
             timeout = 30000;
         }
@@ -410,13 +426,13 @@ export class BshcClient extends AbstractBshcClient {
         }, {
             // We do that because node http does not recognize that bshc is gone.
             // Request would be stuck forever which we do not want
-            // this is the only option I could find to get notified if no something went wrong during polling
+            // this is the only option I could find to get notified if something went wrong during polling
             // 1s due to network delays.
-            timeout: timeout + 1000
+            timeout: timeout + (delay ? delay : 1000)
         }).pipe(tap(response => {
             if (response && response.parsedResponse && response.parsedResponse.error) {
                 throw new BshbError('error during polling: ' + response.parsedResponse.error,
-                    BshbErrorType.POLLING)
+                    BshbErrorType.POLLING, response.parsedResponse.error)
             }
         }));
     }

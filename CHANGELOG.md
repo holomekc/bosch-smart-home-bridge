@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.13] - 2020-11-21
+### Changed
+- Polling errors implement Error
+- Delay for polling timeout used as connection timeout can be set
+
 ## [0.2.12] - 2020-04-01
 ### Fixed
 - fixed npm
