@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.14] - 2020-11-21
+### Changed
+- Update dependencies
+
 ## [0.2.13] - 2020-11-21
 ### Changed
 - Polling errors implement Error

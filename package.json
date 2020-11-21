@@ -30,17 +30,17 @@
     "url": "https://github.com/holomekc/bosch-smart-home-bridge/issues"
   },
   "dependencies": {
-    "rxjs": "^6.5.3",
-    "selfsigned": "^1.10.7",
-    "typescript": "^3.6.3",
-    "uuid": "^3.3.3"
+    "rxjs": "^6.6.3",
+    "selfsigned": "^1.10.8",
+    "typescript": "^3.9.7",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "@types/node": "^12.7.8",
-    "@types/uuid": "^3.4.5",
-    "@typescript-eslint/eslint-plugin": "^2.3.1",
-    "@typescript-eslint/parser": "^2.3.1",
-    "eslint": "^6.0.1",
-    "rimraf": "^3.0.0"
+    "@types/node": "^12.19.6",
+    "@types/uuid": "^3.4.9",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "eslint": "^6.8.0",
+    "rimraf": "^3.0.2"
   }
 }
