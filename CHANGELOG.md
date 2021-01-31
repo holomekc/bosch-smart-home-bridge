@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.15] - 2021-01-31
+### Added
+- Update to api-version 2.1
+
 ## [0.2.14] - 2020-11-21
 ### Changed
 - Update dependencies
