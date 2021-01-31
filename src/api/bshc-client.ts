@@ -452,6 +452,57 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get intrusion detection system state
+     */
+    public getIntrusionDetectionSystemState(): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/intrusion/states/system`);
+    }
+
+    /**
+     * Arm intrusion detection system with last active profile
+     */
+    public armIntrusionDetectionSystem(): Observable<BshbResponse<any>>;
+
+    /**
+     * Activate intrusion detection system with specified profile
+     * @param profileId
+     *        profile to use
+     */
+    public armIntrusionDetectionSystem(profileId: number): Observable<BshbResponse<any>>
+
+    /**
+     * Arm intrusion detection system. If no profileId is defined the last active profile is used.
+     *
+     * @param profileId
+     *        profile to use
+     */
+    public armIntrusionDetectionSystem(profileId?: number): Observable<BshbResponse<any>> {
+        let data = null;
+        if (profileId) {
+            data = {
+                "@type": "armRequest",
+                "profileId": profileId
+            }
+        }
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/arm`, data);
+    }
+
+    /**
+     * Disarm intrusion detection system
+     */
+    public disarmIntrusionDetectionSystem(): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/disarm`);
+    }
+
+    /**
+     * Mute intrusion detection system
+     */
+    public muteIntrusionDetectionSystem(): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/mute`);
+    }
+
+
+    /**
      * Not defined call to BSHC in case something is missing here
      * @param port
      *        port to use
