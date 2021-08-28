@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2021-08-28
+### Changed
+- Update dependencies.
+- Breaking changes in rx.js may occur due to update from 6 -> 7.
+
 ## [0.2.15] - 2021-01-31
 ### Added
 - Update to api-version 2.1
