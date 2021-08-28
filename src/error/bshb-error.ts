@@ -18,7 +18,7 @@ export class BshbError extends Error{
      * @param cause
      *        reason for the error (optional)
      */
-    constructor(message: string, public errorType: BshbErrorType, public cause?: Error) {
+    constructor(message: string, public errorType: BshbErrorType, public cause?: Error | unknown) {
         super(message);
         this.name = 'BshbError';
         Error.captureStackTrace(this, BshbError);
