@@ -19,7 +19,7 @@ export abstract class AbstractBshcClient {
 
     protected static PAIR_PORT = 8443;
 
-    private static DEFAULT_TIMEOUT = 3000;
+    private static DEFAULT_TIMEOUT = 5000;
 
     /**
      * Needed parameters for a {@link AbstractBshcClient}

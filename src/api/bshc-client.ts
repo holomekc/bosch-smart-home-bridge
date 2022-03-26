@@ -468,7 +468,7 @@ export class BshcClient extends AbstractBshcClient {
      * @param profileId
      *        profile to use
      */
-    public armIntrusionDetectionSystem(profileId: number): Observable<BshbResponse<any>>
+    public armIntrusionDetectionSystem(profileId: number, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>>
 
     /**
      * Arm intrusion detection system. If no profileId is defined the last active profile is used.
