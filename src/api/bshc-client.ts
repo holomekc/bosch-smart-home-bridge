@@ -2,12 +2,12 @@ import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
 import {Observable, of} from 'rxjs';
 import {AbstractBshcClient} from './abstract-bshc-client';
-import {map, tap} from "rxjs/operators";
-import {BshbResponse} from "../bshb-response";
-import {BshbCallOptions} from "../bshb-call-options";
-import {PollingResponse} from "../model/polling-response";
-import {BshbError} from "../error/bshb-error";
-import {BshbErrorType} from "../error/bshb-error-type";
+import {map, tap} from 'rxjs/operators';
+import {BshbResponse} from '../bshb-response';
+import {BshbCallOptions} from '../bshb-call-options';
+import {PollingResponse} from '../model/polling-response';
+import {BshbError} from '../error/bshb-error';
+import {BshbErrorType} from '../error/bshb-error-type';
 
 /**
  * This client contains some basic calls which are available to contact Bosch Smart Home Controller (BSHC)
@@ -96,7 +96,7 @@ export class BshcClient extends AbstractBshcClient {
 
     public getDevice(deviceId?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any | any[]>> {
         return this.simpleCall(BshcClient.COMMON_PORT, 'GET',
-            `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`,
+            `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ''}`,
             null, this.getOptions(bshbCallOptions));
     }
 
@@ -364,7 +364,7 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/subscribe',
-            'params': ['com/bosch/sh/remote/*', null] // we subscribe to all topics
+            'params': [ 'com/bosch/sh/remote/*', null ] // we subscribe to all topics
         });
     }
 
@@ -422,7 +422,7 @@ export class BshcClient extends AbstractBshcClient {
         (BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/longPoll',
-            'params': [subscriptionId, timeout / 1000]
+            'params': [ subscriptionId, timeout / 1000 ]
         }, {
             // We do that because node http does not recognize that bshc is gone.
             // Request would be stuck forever which we do not want
@@ -447,15 +447,15 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/unsubscribe',
-            'params': [subscriptionId]
+            'params': [ subscriptionId ]
         });
     }
 
     /**
      * Get intrusion detection system state
      */
-    public getIntrusionDetectionSystemState(): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/intrusion/states/system`);
+    public getIntrusionDetectionSystemState(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/intrusion/states/system`, null, bshbCallOptions);
     }
 
     /**
@@ -475,30 +475,36 @@ export class BshcClient extends AbstractBshcClient {
      *
      * @param profileId
      *        profile to use
+     * @param bshbCallOptions
+     *        additional options for http call
      */
-    public armIntrusionDetectionSystem(profileId?: number): Observable<BshbResponse<any>> {
+    public armIntrusionDetectionSystem(profileId?: number, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         let data = null;
         if (profileId) {
             data = {
-                "@type": "armRequest",
-                "profileId": profileId
+                '@type': 'armRequest',
+                'profileId': profileId
             }
         }
-        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/arm`, data);
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/arm`, data, bshbCallOptions);
     }
 
     /**
      * Disarm intrusion detection system
+     * @param bshbCallOptions
+     *        additional options for http call
      */
-    public disarmIntrusionDetectionSystem(): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/disarm`);
+    public disarmIntrusionDetectionSystem(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/disarm`, null, bshbCallOptions);
     }
 
     /**
      * Mute intrusion detection system
+     * @param bshbCallOptions
+     *        additional options for http call
      */
-    public muteIntrusionDetectionSystem(): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/mute`);
+    public muteIntrusionDetectionSystem(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/mute`, null, bshbCallOptions);
     }
 
 

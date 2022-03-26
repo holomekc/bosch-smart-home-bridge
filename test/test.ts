@@ -1,5 +1,4 @@
-import {catchError, delay, switchMap} from "rxjs/operators";
-import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, switchMap, map, from, of, tap} from "rxjs";
 import {BoschSmartHomeBridgeBuilder} from "../src/builder/bosch-smart-home-bridge-builder";
 import {BshbError} from "../src/error/bshb-error";
 import {BshbErrorType} from "../src/error/bshb-error-type";
@@ -35,78 +34,19 @@ const bshb = BoschSmartHomeBridgeBuilder.builder()
     .withClientPrivateKey(certificate.private)
     .build();
 
-let pollingTrigger = new BehaviorSubject<boolean>(true);
 
-const poll = (delay?: number) => {
-    delay = delay ? delay : 0;
-    setTimeout(() => {
-        pollingTrigger.next(true);
-    }, delay);
-};
 
-const startPolling = (delay?: number) => {
-    delay = delay ? delay : 0;
-    setTimeout(() => {
-        subscribeAndPoll();
-    }, delay);
-};
+bshb.getBshcClient().getDeviceServices().pipe(
+    switchMap(response => {
+        console.log(`Found ${(response.parsedResponse.length)} rooms.`);
+        return from(response.parsedResponse);
+    }),
+    switchMap(room => {
+        console.log(`Cache room: ${room.id} with: ${JSON.stringify(room)}`);
+        return of<void>(undefined);
+    }), tap({
+        complete: () => console.log('Rooms are done')
+    })).subscribe();
 
-const subscribeAndPoll = () => {
-    pollingTrigger.next(false);
-    pollingTrigger.complete();
 
-    pollingTrigger = new BehaviorSubject<boolean>(true);
-
-    bshb.getBshcClient().subscribe().subscribe(response => {
-        console.log("Subscribe response");
-        console.log(response.parsedResponse);
-
-        pollingTrigger.subscribe(keepPolling => {
-            if (keepPolling) {
-                bshb.getBshcClient().longPolling(response.parsedResponse.result).subscribe(info => {
-                    if (info.incomingMessage.statusCode !== 200) {
-                        poll(5000);
-                    } else {
-                        console.log("Changes: ");
-                        console.log(info.parsedResponse.result);
-                        poll();
-                    }
-                }, error => {
-                    // Error: we want to keep polling. So true
-                    if ((error as BshbError).errorType === BshbErrorType.POLLING) {
-                        console.log("polling failed due to an jsonrpc error. Try to reconnect.");
-                        startPolling(5000);
-                    } else {
-                        console.log("polling failed. Try again after delay");
-                        poll(5000);
-                    }
-                });
-            } else {
-                bshb.getBshcClient().unsubscribe(response.parsedResponse.result).subscribe(() => {
-                });
-            }
-        });
-    });
-};
-
-bshb.pairIfNeeded('bshb', identifier, password).pipe(catchError(err => {
-    console.log("Test Result error:");
-    console.log(err);
-    return EMPTY;
-}), switchMap(pairingResponse => {
-    console.log("Pairing result:");
-    if (pairingResponse) {
-        console.log("Pairing successful");
-        console.log(pairingResponse.incomingMessage.statusCode);
-        console.log(pairingResponse.parsedResponse);
-    } else {
-        console.log("Already paired");
-    }
-
-    return bshb.getBshcClient().getRooms();
-})).subscribe(getRoomsResponse => {
-    console.log("GetRooms:");
-    console.log(getRoomsResponse.parsedResponse);
-
-    startPolling();
-});
+setTimeout(function(){console.log('end'); }, 30000);
