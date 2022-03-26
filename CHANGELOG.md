@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2021-08-28
+### Changed
+- Update dependencies.
+
 ## [1.0.1] - 2021-08-28
 ### Changed
 - allow setting options for IntrusionDetectionSystem. The parameter is optional and backward compatible.
