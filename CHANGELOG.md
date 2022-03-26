@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2021-08-28
+### Changed
+- Update dependencies due to vulnerabilities
+
 ## [1.0.3] - 2021-08-28
 ### Changed
 - fix options for IntrusionDetectionSystem...
