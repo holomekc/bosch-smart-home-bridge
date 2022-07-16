@@ -58,6 +58,7 @@ export abstract class AbstractBshcClient {
         requestOptions.path = path;
         requestOptions.method = method;
         requestOptions.rejectUnauthorized = true;
+        (requestOptions as any).enableTrace = true;
         (requestOptions as any).checkServerIdentity = (host: string) => {
             // we cannot use tls.checkServerIdentity because it would fail altname check
             host = '' + host;
