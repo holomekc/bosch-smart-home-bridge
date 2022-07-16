@@ -24,7 +24,7 @@ const password: string = extractArg(2);
 // };
 
 // or generate it:
-identifier = '68da6c8e-1e24-40e1-941a-086746673663';
+// identifier = '68da6c8e-1e24-40e1-941a-086746673663';
 let certificate = BshbUtils.generateClientCertificate();
 
 const logger = new DefaultLogger();
