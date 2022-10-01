@@ -1,11 +1,11 @@
 import {Logger} from './logger';
 import {PairingClient} from './api/pairing-client';
-import {concatMap, delay, retryWhen, tap} from 'rxjs/operators';
+import {catchError, concatMap, delay, retry, retryWhen, tap} from 'rxjs/operators';
 import {iif, Observable, of, throwError} from 'rxjs';
 import {BshcClient} from './api/bshc-client';
 import {CertificateStorage} from './certificate-storage';
-import {BshbResponse} from "./bshb-response";
-import {BoschSmartHomeBridgeBuilder} from "./builder/bosch-smart-home-bridge-builder";
+import {BshbResponse} from './bshb-response';
+import {BoschSmartHomeBridgeBuilder} from './builder/bosch-smart-home-bridge-builder';
 
 /**
  * The {@link BoschSmartHomeBridge} (BSHB) allows communication to Bosch Smart Home Controller (BSHC).
@@ -38,8 +38,8 @@ export class BoschSmartHomeBridge {
         this.bshcClient = new BshcClient(this.host, this.certificateStorage, this.logger);
 
         // remove sensitive data from builder
-        bshbBuilder.withClientCert("");
-        bshbBuilder.withClientPrivateKey("");
+        bshbBuilder.withClientCert('');
+        bshbBuilder.withClientPrivateKey('');
     }
 
     /**
@@ -72,21 +72,25 @@ export class BoschSmartHomeBridge {
         return new Observable(observer => {
             this.logger.info(`Check if client with identifier: ${identifier} is already paired.`);
 
-            this.bshcClient.getRooms().subscribe(() => {
-                this.logger.info(`Client with identifier: ${identifier} already paired. Using existing certificate`);
-                observer.next();
-                observer.complete();
-            }, testConnectionError => {
-                this.logger.fine('Error during call to test if already paired.', testConnectionError);
-                this.logger.info(`Client with identifier: ${identifier} was not paired yet.`);
+            this.bshcClient.getRooms().subscribe({
+                next: () => {
+                    this.logger.info(`Client with identifier: ${identifier} already paired. Using existing certificate`);
+                    observer.next();
+                    observer.complete();
+                }, error: testConnectionError => {
+                    this.logger.fine('Error during call to test if already paired.', testConnectionError);
+                    this.logger.info(`Client with identifier: ${identifier} was not paired yet.`);
 
-                this.pairClient(name, identifier, systemPassword, pairingDelay, pairingAttempts).subscribe(value => {
-                    observer.next(value);
-                    observer.complete();
-                }, error => {
-                    observer.error(error);
-                    observer.complete();
-                });
+                    this.pairClient(name, identifier, systemPassword, pairingDelay, pairingAttempts).subscribe({
+                        next: value => {
+                            observer.next(value);
+                            observer.complete();
+                        }, error: error => {
+                            observer.error(error);
+                            observer.complete();
+                        }
+                    });
+                }
             });
         });
     }
@@ -99,22 +103,28 @@ export class BoschSmartHomeBridge {
             this.logger.info('Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing.');
             this.pairingClient.sendPairingRequest(identifier, name, this.certificateStorage.clientCert, systemPassword)
                 .pipe(
-                    retryWhen(errors => errors.pipe(concatMap((e, i) => iif(() => i > pairingAttempts,
-                        throwError(e),
-                        of(e).pipe(tap(() => this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${e.cause}`)),
-                            delay(pairingDelay))))))
+                    catchError(err => {
+                        this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${err.cause}`)
+                        return throwError(err);
+                    }),
+                    retry({
+                        count: pairingAttempts,
+                        delay: pairingDelay
+                    })
                 )
-                .subscribe(value => {
-                    if (value.incomingMessage.statusCode === 201) {
-                        this.logger.info('Pairing successful.');
-                    } else {
-                        this.logger.info('Unexpected pairing response. Most likely wrong input data. Check password, etc. Pairing stopped.');
+                .subscribe({
+                    next: value => {
+                        if (value.incomingMessage.statusCode === 201) {
+                            this.logger.info('Pairing successful.');
+                        } else {
+                            this.logger.info('Unexpected pairing response. Most likely wrong input data. Check password, etc. Pairing stopped.');
+                        }
+                        observer.next(value);
+                        observer.complete();
+                    }, error: error => {
+                        this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error.cause}`);
+                        observer.error(error);
                     }
-                    observer.next(value);
-                    observer.complete();
-                }, error => {
-                    this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error.cause}`);
-                    observer.error(error);
                 });
         });
     }

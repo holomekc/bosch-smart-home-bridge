@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2021-01-31
+### Added
+- New services:
+    - Water alarm
+    - Air purity
+    - Motion lights
+
+### Changed
+- Update rxjs usage due to deprecation
+
 ## [1.0.4] - 2021-08-28
 ### Changed
 - Update dependencies due to vulnerabilities

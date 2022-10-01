@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
 import {Observable, of} from 'rxjs';
@@ -467,6 +469,8 @@ export class BshcClient extends AbstractBshcClient {
      * Activate intrusion detection system with specified profile
      * @param profileId
      *        profile to use
+     *@param bshbCallOptions
+     *       additional options for http call
      */
     public armIntrusionDetectionSystem(profileId: number, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>>
 
@@ -505,6 +509,107 @@ export class BshcClient extends AbstractBshcClient {
      */
     public muteIntrusionDetectionSystem(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/mute`, null, bshbCallOptions);
+    }
+
+    /**
+     * Get water alarm configuration
+     *
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public getWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm`, null, bshbCallOptions)
+    }
+
+    /**
+     * Get water alarm configuration
+     *
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public getWaterAlarmConfiguration(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, null, bshbCallOptions)
+    }
+
+    /**
+     * Mute alarm
+     *
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public muteWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/actions/mute`, null, bshbCallOptions)
+    }
+
+    /**
+     * Update air purity guardian configuration
+     *
+     * @param id
+     *        Identifier of the air purity guardian to update
+     * @param data
+     *        data to set. Check {@link #getAirPurityGuardian} for values.
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public updateWaterAlarm(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        if (data && !data.hasOwnProperty('@type')) {
+            data['@type'] = 'waterAlarmSystemConfiguration'
+        }
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, data, bshbCallOptions)
+    }
+
+    /**
+     * Get air purity guardian configuration
+     *
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public getAirPurityGuardian(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian`, null, bshbCallOptions)
+    }
+
+    /**
+     * Update air purity guardian configuration
+     *
+     * @param id
+     *        Identifier of the air purity guardian to update
+     * @param data
+     *        data to set. Check {@link #getAirPurityGuardian} for values.
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public updateAirPurityGuardian(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        if (data && !data.hasOwnProperty('@type')) {
+            data['@type'] = 'airPurityGuardian'
+        }
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian/${id}`, data, bshbCallOptions)
+    }
+
+    /**
+     * Get motion lights configuration
+     *
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public getMotionLights(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/motionlights`, null, bshbCallOptions)
+    }
+
+    /**
+     * Update motion lights configuration
+     *
+     * @param id
+     *        Identifier of the motion light to update
+     * @param data
+     *        data to set. Check {@link #getAirPurityGuardian} for values.
+     * @param bshbCallOptions
+     *        additional options for http call
+     */
+    public updateMotionLights(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        if (data && !data.hasOwnProperty('@type')) {
+            data['@type'] = 'motionlight'
+        }
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/motionlights/${id}`, null, bshbCallOptions)
     }
 
 
