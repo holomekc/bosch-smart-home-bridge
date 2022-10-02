@@ -71,6 +71,18 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get a specific room
+     * @param id
+     *        identifier of a room
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     * @return bshb response object
+     */
+    public getRoom(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/rooms/${id}`, null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
      * Same as {@link BshcClient#getDevice()}
      * @param bshbCallOptions
      *        define custom headers, etc. Some values may be overwritten. E.g. host
