@@ -544,14 +544,12 @@ export class BshcClient extends AbstractBshcClient {
     /**
      * Update air purity guardian configuration
      *
-     * @param id
-     *        Identifier of the air purity guardian to update
      * @param data
      *        data to set. Check {@link #getAirPurityGuardian} for values.
      * @param bshbCallOptions
      *        additional options for http call
      */
-    public updateWaterAlarm(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    public updateWaterAlarm(data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         if (data && !data.hasOwnProperty('@type')) {
             data['@type'] = 'waterAlarmSystemConfiguration'
         }
