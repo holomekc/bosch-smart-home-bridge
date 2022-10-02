@@ -3,11 +3,11 @@ import * as https from 'https';
 import {RequestOptions} from 'https';
 import {Logger} from '../logger';
 import {CertificateStorage} from '../certificate-storage';
-import {BshbResponse} from "../bshb-response";
-import {BshbError} from "../error/bshb-error";
-import {BshbErrorType} from "../error/bshb-error-type";
-import {BshbCallOptions} from "../bshb-call-options";
-import {BshbUtils} from "../bshb-utils";
+import {BshbResponse} from '../bshb-response';
+import {BshbError} from '../error/bshb-error';
+import {BshbErrorType} from '../error/bshb-error-type';
+import {BshbCallOptions} from '../bshb-call-options';
+import {BshbUtils} from '../bshb-utils';
 
 /**
  * This class provides a simple call for all defined clients
@@ -137,7 +137,12 @@ export abstract class AbstractBshcClient {
                         if (dataString) {
                             parsedData = JSON.parse(dataString);
                         }
-                        observer.next(new BshbResponse<T>(res, parsedData));
+
+                        if (res.statusCode && res.statusCode >= 300) {
+                            this.handleError(observer, BshbErrorType.ERROR, `call to BSHC failed with HTTP status=${res.statusCode}`);
+                        } else {
+                            observer.next(new BshbResponse<T>(res, parsedData));
+                        }
                     } catch (e) {
                         observer.error(new BshbError('error during parsing response from BSHC:',
                             BshbErrorType.PARSING, e));

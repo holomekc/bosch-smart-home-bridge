@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2022-10-02
+### Changed
+- Handle HTTP status codes >= 300 as errors
+
 ## [1.1.4] - 2022-10-02
 ### Fixed
 - Updating motion lights 
