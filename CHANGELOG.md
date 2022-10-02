@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2021-01-31
+### Fixed
+- npm build
+
 ## [1.1.1] - 2021-01-31
 ### Changed
 - Remove id from update water alarm
