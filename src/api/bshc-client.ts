@@ -607,7 +607,7 @@ export class BshcClient extends AbstractBshcClient {
         if (data && !data.hasOwnProperty('@type')) {
             data['@type'] = 'motionlight'
         }
-        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/motionlights/${id}`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/motionlights/${id}`, data, bshbCallOptions)
     }
 
 

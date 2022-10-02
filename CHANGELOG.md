@@ -1,19 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.1.3] - 2021-01-31
+## [1.1.4] - 2022-10-02
+### Fixed
+- Updating motion lights 
+
+## [1.1.3] - 2022-10-02
 ### Fixed
 - npm publishing bug
 
-## [1.1.2] - 2021-01-31
+## [1.1.2] - 2022-10-01
 ### Fixed
 - npm build
 
-## [1.1.1] - 2021-01-31
+## [1.1.1] - 2022-10-01
 ### Changed
 - Remove id from update water alarm
 
-## [1.1.0] - 2021-01-31
+## [1.1.0] - 2022-10-01
 ### Added
 - New services:
     - Water alarm
