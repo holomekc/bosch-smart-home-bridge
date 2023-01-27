@@ -28,8 +28,11 @@ export abstract class AbstractBshcClient {
      *        host name / ip address of BSHC
      * @param logger
      *        Logger to use
+     * @param ignoreServerCertificateCheck
+     *        Ignores the server certificate.
      */
-    protected constructor(protected host: string, protected logger: Logger) {
+    protected constructor(protected host: string, protected logger: Logger,
+                          protected ignoreServerCertificateCheck: boolean) {
     }
 
     /**
@@ -57,7 +60,7 @@ export abstract class AbstractBshcClient {
         requestOptions.port = port;
         requestOptions.path = path;
         requestOptions.method = method;
-        requestOptions.rejectUnauthorized = true;
+        requestOptions.rejectUnauthorized = !this.ignoreServerCertificateCheck;
         (requestOptions as any).checkServerIdentity = (host: string) => {
             // we cannot use tls.checkServerIdentity because it would fail altname check
             host = '' + host;

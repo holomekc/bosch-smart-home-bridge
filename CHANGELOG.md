@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.7] - 2023-01-27
+### Added
+- Allow to ignore server certificate check. Although this is insecure. It allows users to skip the check in case the root ca is expiring. Everything is local so less critical. 
+
 ## [1.1.6] - 2022-10-02
 ### Added
 - Allow to request a specific room

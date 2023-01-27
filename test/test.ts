@@ -36,7 +36,7 @@ const bshb = BoschSmartHomeBridgeBuilder.builder()
 
 
 
-bshb.getBshcClient().getDeviceServices().pipe(
+bshb.getBshcClient().getRooms().pipe(
     switchMap(response => {
         console.log(`Found ${(response.parsedResponse.length)} rooms.`);
         return from(response.parsedResponse);

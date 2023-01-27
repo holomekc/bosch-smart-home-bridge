@@ -32,9 +32,12 @@ export class BshcClient extends AbstractBshcClient {
      *        instance of certificate storage
      * @param logger
      *        logger to use
+     * @param ignoreServerCertificateCheck
+     *        Ignores the server certificate.
      */
-    constructor(host: string, private certificateStorage: CertificateStorage, logger: Logger) {
-        super(host, logger);
+    constructor(host: string, private certificateStorage: CertificateStorage, logger: Logger,
+                ignoreServerCertificateCheck: boolean) {
+        super(host, logger, ignoreServerCertificateCheck);
     }
 
     private getOptions(bshbCallOptions?: BshbCallOptions): { certificateStorage?: CertificateStorage, systemPassword?: string, bshbCallOptions?: BshbCallOptions } {

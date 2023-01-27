@@ -19,9 +19,11 @@ export class PairingClient extends AbstractBshcClient {
      *        host name / ip address of BSHC
      * @param logger
      *        logger to use
+     * @param ignoreServerCertificateCheck
+     *        Ignores the server certificate.
      */
-    constructor(host: string, logger: Logger) {
-        super(host, logger);
+    constructor(host: string, logger: Logger, ignoreServerCertificateCheck: boolean) {
+        super(host, logger, ignoreServerCertificateCheck);
     }
 
     private static PAIR_PATH = '/smarthome/clients';

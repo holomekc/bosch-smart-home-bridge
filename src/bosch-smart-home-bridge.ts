@@ -24,6 +24,8 @@ export class BoschSmartHomeBridge {
     private readonly host: string;
     private readonly logger: Logger;
 
+    private readonly ignoreServerCertificateCheck: boolean;
+
     /**
      * Create a new instance for communication with BSHC
      *
@@ -33,9 +35,10 @@ export class BoschSmartHomeBridge {
     constructor(bshbBuilder: BoschSmartHomeBridgeBuilder) {
         this.host = bshbBuilder.host;
         this.logger = bshbBuilder.logger;
+        this.ignoreServerCertificateCheck = bshbBuilder.ignoreSeverCertificateCheck;
         this.certificateStorage = new CertificateStorage(bshbBuilder.clientCert, bshbBuilder.clientPrivateKey);
-        this.pairingClient = new PairingClient(this.host, this.logger);
-        this.bshcClient = new BshcClient(this.host, this.certificateStorage, this.logger);
+        this.pairingClient = new PairingClient(this.host, this.logger, this.ignoreServerCertificateCheck);
+        this.bshcClient = new BshcClient(this.host, this.certificateStorage, this.logger, this.ignoreServerCertificateCheck);
 
         // remove sensitive data from builder
         bshbBuilder.withClientCert('');

@@ -1,8 +1,8 @@
-import {Host} from "./host";
-import {DefaultLogger, Logger} from "../logger";
-import {BoschSmartHomeBridge} from "../bosch-smart-home-bridge";
-import {ClientCert} from "./client-cert";
-import {ClientKey} from "./client-key";
+import {Host} from './host';
+import {DefaultLogger, Logger} from '../logger';
+import {BoschSmartHomeBridge} from '../bosch-smart-home-bridge';
+import {ClientCert} from './client-cert';
+import {ClientKey} from './client-key';
 
 /**
  * Builder for creating BoschSmartHomeBridge to make sure that properties are correctly set.
@@ -16,6 +16,8 @@ export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey 
     private _clientCert: string = undefined as unknown as string;
     private _clientPrivateKey: string = undefined as unknown as string;
     private _logger: Logger = new DefaultLogger();
+
+    private _ignoreSeverCertificateCheck: boolean = false;
 
     /**
      * Hide constructor
@@ -85,6 +87,24 @@ export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey 
     }
 
     /**
+     * Set ignore server certificate check
+     * @param ignore
+     *        ignore server certificate check
+     */
+    public withIgnoreCertificateCheck(ignore: boolean): BoschSmartHomeBridgeBuilder {
+        this._ignoreSeverCertificateCheck = ignore;
+        return this;
+    }
+
+
+    /**
+     * Get ignore server certificate check.
+     */
+    get ignoreSeverCertificateCheck(): boolean {
+        return this._ignoreSeverCertificateCheck;
+    }
+
+    /**
      * Build {@link BoschSmartHomeBridge}. Required properties are: <br>
      *     - host <br>
      *     - identifier <br>
@@ -93,16 +113,17 @@ export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey 
      */
     public build(): BoschSmartHomeBridge {
         if (!this.host) {
-            throw new Error("host is a required property. withHost must be called with a suitable value.");
+            throw new Error('host is a required property. withHost must be called with a suitable value.');
         }
 
         if (!this.clientCert) {
-            throw new Error("clientCert is a required property. withClientCert must be called with a suitable value.");
+            throw new Error('clientCert is a required property. withClientCert must be called with a suitable value.');
         }
 
         if (!this.clientPrivateKey) {
-            throw new Error("clientPrivateKey is a required property. withClientPrivateKey must be called with a suitable value");
+            throw new Error('clientPrivateKey is a required property. withClientPrivateKey must be called with a suitable value');
         }
+
         return new BoschSmartHomeBridge(this);
     }
 }
