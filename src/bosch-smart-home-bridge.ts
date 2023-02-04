@@ -107,7 +107,7 @@ export class BoschSmartHomeBridge {
             this.pairingClient.sendPairingRequest(identifier, name, this.certificateStorage.clientCert, systemPassword)
                 .pipe(
                     catchError(err => {
-                        this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${err.cause}`)
+                        this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${err}`)
                         return throwError(err);
                     }),
                     retry({
@@ -125,7 +125,7 @@ export class BoschSmartHomeBridge {
                         observer.next(value);
                         observer.complete();
                     }, error: error => {
-                        this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error.cause}`);
+                        this.logger.warn(`Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error}`);
                         observer.error(error);
                     }
                 });

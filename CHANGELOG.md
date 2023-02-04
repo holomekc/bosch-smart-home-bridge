@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.8] - 2023-02-04
+### Added
+- More feedback why pairing failed.
+### Fixed
+- issue with uuid generation.
+
 ## [1.1.7] - 2023-01-27
 ### Added
 - Allow to ignore server certificate check. Although this is insecure. It allows users to skip the check in case the root ca is expiring. Everything is local so less critical. 

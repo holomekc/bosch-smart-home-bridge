@@ -1,5 +1,5 @@
 import selfsigned, {CertificateDefinition} from 'selfsigned';
-import uuid from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Utils class which provides some helpful methods when using BSHB.
@@ -18,7 +18,7 @@ export class BshbUtils {
      * Generate a random identifier which is needed during pairing process.
      */
     public static generateIdentifier(): string {
-        return uuid.v4();
+        return uuidv4();
     }
 
     /**
