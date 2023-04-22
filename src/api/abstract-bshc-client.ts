@@ -147,7 +147,7 @@ export abstract class AbstractBshcClient {
                             observer.next(new BshbResponse<T>(res, parsedData));
                         }
                     } catch (e) {
-                        observer.error(new BshbError('error during parsing response from BSHC:',
+                        observer.error(new BshbError('error during parsing response from BSHC',
                             BshbErrorType.PARSING, e));
                     } finally {
                         observer.complete();

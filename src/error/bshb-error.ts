@@ -1,4 +1,4 @@
-import {BshbErrorType} from "./bshb-error-type";
+import {BshbErrorType} from './bshb-error-type';
 
 /**
  * Error object used by the library
@@ -6,7 +6,7 @@ import {BshbErrorType} from "./bshb-error-type";
  * @author Christopher Holomek
  * @since 06.01.2020
  */
-export class BshbError extends Error{
+export class BshbError extends Error {
 
     /**
      * Create a new error instance
@@ -19,7 +19,7 @@ export class BshbError extends Error{
      *        reason for the error (optional)
      */
     constructor(message: string, public errorType: BshbErrorType, public cause?: Error | unknown) {
-        super(message);
+        super(`[${BshbErrorType[errorType]}] ${message}`, {cause: cause});
         this.name = 'BshbError';
         Error.captureStackTrace(this, BshbError);
     }

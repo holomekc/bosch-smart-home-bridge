@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2023-04-22
+### Changed
+- changed to newer ECMA Script version
+- more details in errors
+
 ## [1.2.1] - 2023-04-22
 ### Fixed
 - fix issue with activating a climate schedule
