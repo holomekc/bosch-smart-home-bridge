@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2023-04-22
+### Fixed
+- fix issue with activating a climate schedule
+
 ## [1.2.0] - 2023-04-22
 ### Changed
 - Update to api-version 3.2 of BSHC

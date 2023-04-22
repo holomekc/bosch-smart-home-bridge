@@ -433,7 +433,7 @@ export class BshcClient extends AbstractBshcClient {
      *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
     public activateClimateSchedules(deviceId: string, id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/activate`,
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${id}/activate`,
             null, this.getOptions(bshbCallOptions));
     }
 
