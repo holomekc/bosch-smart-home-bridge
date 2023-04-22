@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2023-04-22
+### Changed
+- Update to api-version 3.2 of BSHC
+### Added
+- Climate apis for templates and schedules
+
 ## [1.1.8] - 2023-02-04
 ### Added
 - More feedback why pairing failed.

@@ -40,15 +40,19 @@ export class BshcClient extends AbstractBshcClient {
         super(host, logger, ignoreServerCertificateCheck);
     }
 
-    private getOptions(bshbCallOptions?: BshbCallOptions): { certificateStorage?: CertificateStorage, systemPassword?: string, bshbCallOptions?: BshbCallOptions } {
+    private getOptions(bshbCallOptions?: BshbCallOptions): {
+        certificateStorage?: CertificateStorage,
+        systemPassword?: string,
+        bshbCallOptions?: BshbCallOptions
+    } {
         if (bshbCallOptions) {
             return {
                 certificateStorage: this.certificateStorage,
-                bshbCallOptions: bshbCallOptions
+                bshbCallOptions: bshbCallOptions,
             };
         } else {
             return {
-                certificateStorage: this.certificateStorage
+                certificateStorage: this.certificateStorage,
             };
         }
     }
@@ -366,9 +370,98 @@ export class BshcClient extends AbstractBshcClient {
     /**
      * Get status of windows/doors
      * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
      */
     public getOpenWindows(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/doors-windows/openwindows`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Create a new climate schedule for the specified device.
+     * @param deviceId
+     *        identifier of the device to get the schedules from
+     * @param data
+     *        schedule data to use
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public createClimateSchedule(deviceId: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Get all available climate schedules for a device
+     * @param deviceId
+     *        identifier of the device to get the schedules from
+     * @param type
+     *        type of schedule. At the moment "HEATING" or "COOLING". "HEATING" is default.
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public getClimateSchedules(deviceId: string, type: string = 'HEATING', bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${type}`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Update an existing climate schedule for the specified device.
+     * @param deviceId
+     *        identifier of the device to get the schedules from
+     * @param data
+     *        schedule data to use
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public updateClimateSchedule(deviceId: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Activate the specified climate schedule for the specified device.
+     * @param deviceId
+     *        identifier of the device to get the schedules from
+     * @param id
+     *        identifier of the schedule to activate
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public activateClimateSchedules(deviceId: string, id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/activate`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Delete an existing climate schedule for the specified device.
+     * @param deviceId
+     *        identifier of the device to get the schedules from
+     * @param id
+     *        identifier of the schedule to remove
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public deleteClimateSchedule(deviceId: string, id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'DELETE', `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${id}`,
+            null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Get all available climate templates
+     * @param type
+     *        type of schedule. At the moment "HEATING" or "COOLING". "HEATING" is default.
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     */
+    public getClimateTemplates(type: string = 'HEATING', bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/climate/templates/${type}`,
             null, this.getOptions(bshbCallOptions));
     }
 
@@ -381,7 +474,7 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/subscribe',
-            'params': [ 'com/bosch/sh/remote/*', null ] // we subscribe to all topics
+            'params': [ 'com/bosch/sh/remote/*', null ], // we subscribe to all topics
         });
     }
 
@@ -405,7 +498,10 @@ export class BshcClient extends AbstractBshcClient {
      * @param timeout
      *        time (ms) for how long the request is kept open. Default is 30000 ms
      */
-    public longPolling(subscriptionId: string, timeout: number): Observable<BshbResponse<{ result: any[], jsonrpc: string }>>;
+    public longPolling(subscriptionId: string, timeout: number): Observable<BshbResponse<{
+        result: any[],
+        jsonrpc: string
+    }>>;
 
     /**
      * Start long polling after subscription. Time a request is kept open can be specified by timeout value.
@@ -419,7 +515,10 @@ export class BshcClient extends AbstractBshcClient {
      * @param delay
      *        delay (ms) for how the timeout is extended. So timeout + delay = connection timeout. Default is 1000 ms
      */
-    public longPolling(subscriptionId: string, timeout: number, delay: number): Observable<BshbResponse<{ result: any[], jsonrpc: string }>>;
+    public longPolling(subscriptionId: string, timeout: number, delay: number): Observable<BshbResponse<{
+        result: any[],
+        jsonrpc: string
+    }>>;
 
     /**
      * Start long polling after subscription
@@ -439,17 +538,17 @@ export class BshcClient extends AbstractBshcClient {
         (BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/longPoll',
-            'params': [ subscriptionId, timeout / 1000 ]
+            'params': [ subscriptionId, timeout / 1000 ],
         }, {
             // We do that because node http does not recognize that bshc is gone.
             // Request would be stuck forever which we do not want
             // this is the only option I could find to get notified if something went wrong during polling
             // 1s due to network delays.
-            timeout: timeout + (delay ? delay : 1000)
+            timeout: timeout + (delay ? delay : 1000),
         }).pipe(tap(response => {
             if (response && response.parsedResponse && response.parsedResponse.error) {
                 throw new BshbError('error during polling: ' + response.parsedResponse.error,
-                    BshbErrorType.POLLING, response.parsedResponse.error)
+                    BshbErrorType.POLLING, response.parsedResponse.error);
             }
         }));
     }
@@ -464,7 +563,7 @@ export class BshcClient extends AbstractBshcClient {
         return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
             'jsonrpc': '2.0',
             'method': 'RE/unsubscribe',
-            'params': [ subscriptionId ]
+            'params': [ subscriptionId ],
         });
     }
 
@@ -502,8 +601,8 @@ export class BshcClient extends AbstractBshcClient {
         if (profileId) {
             data = {
                 '@type': 'armRequest',
-                'profileId': profileId
-            }
+                'profileId': profileId,
+            };
         }
         return this.call(BshcClient.COMMON_PORT, 'POST', `/${BshcClient.PATH_PREFIX}/intrusion/actions/arm`, data, bshbCallOptions);
     }
@@ -533,7 +632,7 @@ export class BshcClient extends AbstractBshcClient {
      *        additional options for http call
      */
     public getWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm`, null, bshbCallOptions);
     }
 
     /**
@@ -543,7 +642,7 @@ export class BshcClient extends AbstractBshcClient {
      *        additional options for http call
      */
     public getWaterAlarmConfiguration(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, null, bshbCallOptions);
     }
 
     /**
@@ -553,11 +652,11 @@ export class BshcClient extends AbstractBshcClient {
      *        additional options for http call
      */
     public muteWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/actions/mute`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/actions/mute`, null, bshbCallOptions);
     }
 
     /**
-     * Update air purity guardian configuration
+     * Update water alarm
      *
      * @param data
      *        data to set. Check {@link #getAirPurityGuardian} for values.
@@ -566,9 +665,9 @@ export class BshcClient extends AbstractBshcClient {
      */
     public updateWaterAlarm(data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         if (data && !data.hasOwnProperty('@type')) {
-            data['@type'] = 'waterAlarmSystemConfiguration'
+            data['@type'] = 'waterAlarmSystemConfiguration';
         }
-        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, data, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`, data, bshbCallOptions);
     }
 
     /**
@@ -578,7 +677,7 @@ export class BshcClient extends AbstractBshcClient {
      *        additional options for http call
      */
     public getAirPurityGuardian(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian`, null, bshbCallOptions);
     }
 
     /**
@@ -593,9 +692,9 @@ export class BshcClient extends AbstractBshcClient {
      */
     public updateAirPurityGuardian(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         if (data && !data.hasOwnProperty('@type')) {
-            data['@type'] = 'airPurityGuardian'
+            data['@type'] = 'airPurityGuardian';
         }
-        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian/${id}`, data, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian/${id}`, data, bshbCallOptions);
     }
 
     /**
@@ -605,7 +704,7 @@ export class BshcClient extends AbstractBshcClient {
      *        additional options for http call
      */
     public getMotionLights(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/motionlights`, null, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/motionlights`, null, bshbCallOptions);
     }
 
     /**
@@ -620,9 +719,9 @@ export class BshcClient extends AbstractBshcClient {
      */
     public updateMotionLights(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
         if (data && !data.hasOwnProperty('@type')) {
-            data['@type'] = 'motionlight'
+            data['@type'] = 'motionlight';
         }
-        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/motionlights/${id}`, data, bshbCallOptions)
+        return this.call(BshcClient.COMMON_PORT, 'PUT', `/${BshcClient.PATH_PREFIX}/motionlights/${id}`, data, bshbCallOptions);
     }
 
 
