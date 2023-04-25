@@ -1,8 +1,8 @@
 {
     "extends": "@tsconfig/node16/tsconfig.json",
     "compilerOptions": {
-        "lib": ["es2022"],
-        "target": "es2022",
+        "lib": ["es2017"],
+        "target": "es2017",
         "declaration": true,
         "outDir": "./dist",
         "typeRoots": [

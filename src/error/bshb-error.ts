@@ -19,7 +19,7 @@ export class BshbError extends Error {
      *        reason for the error (optional)
      */
     constructor(message: string, public errorType: BshbErrorType, public cause?: Error | unknown) {
-        super(`[${BshbErrorType[errorType]}] ${message}`, {cause: cause});
+        super(`[${BshbErrorType[errorType]}] ${message}`);
         this.name = 'BshbError';
         Error.captureStackTrace(this, BshbError);
     }

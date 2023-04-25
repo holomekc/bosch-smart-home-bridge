@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.2-es2017] - 2023-04-25
+### Changed
+- parallel dependency with ES2017 support only
+
 ## [1.2.2] - 2023-04-22
 ### Changed
 - changed to newer ECMA Script version
