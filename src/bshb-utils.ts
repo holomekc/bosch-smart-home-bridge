@@ -1,4 +1,4 @@
-import selfsigned, {CertificateDefinition} from 'selfsigned';
+import selfsigned, {GenerateResult} from 'selfsigned';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -7,11 +7,21 @@ import { v4 as uuidv4 } from 'uuid';
 export class BshbUtils {
 
     /**
-     * Generate a client certificate for communication with BSHC
+     * Generate a client certificate for communication with BSHC.
+     * The certificate validity is 365 days. As far as I know this does not really matter,
+     * because the controller does not read the validity value of the client certificate.
      */
-    public static generateClientCertificate(): CertificateDefinition {
-        return selfsigned.generate(null,
-            {keySize: 2048, clientCertificate: false, algorithm: 'sha256'});
+    public static generateClientCertificate(): GenerateResult;
+    /**
+     * Generate a client certificate for communication with BSHC.
+     * The certificate validity can be defined here.As far as I know this does not really matter,
+     * because the controller does not read the validity value of the client certificate.
+     * @param days
+     */
+    public static generateClientCertificate(days: number): GenerateResult;
+    public static generateClientCertificate(days?: number): GenerateResult {
+        return selfsigned.generate(undefined,
+            {keySize: 2048, clientCertificate: false, algorithm: 'sha256', days: days});
     }
 
     /**

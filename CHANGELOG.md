@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2023-11-22
+### Changed
+- update dependencies
+- remove types for selfsigned, which provides its own definition already
+- Remove ClientDefinition, because of types removal. This might be a breaking change
+
 ## [1.2.2] - 2023-04-22
 ### Changed
 - changed to newer ECMA Script version
