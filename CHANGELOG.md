@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2023-11-22
+### Changed
+- fix build, because I forgot what I am doing here... I need to add GitHub actions...
+
 ## [1.3.0] - 2023-11-22
 ### Changed
 - update dependencies
