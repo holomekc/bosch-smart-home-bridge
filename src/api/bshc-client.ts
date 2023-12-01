@@ -235,6 +235,52 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
+     * Get the user defined states
+     *
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     * return bshb response object
+     */
+    public getUserDefinedStates(): Observable<BshbResponse<any[]>>;
+    /**
+     * Get the user defined state with the specified id.
+     *
+     * @param id
+     *        identifier of the user defined state
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     * return bshb response object
+     */
+    public getUserDefinedStates(id: string): Observable<BshbResponse<any[]>>;
+    public getUserDefinedStates(id?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+        let path;
+        if (id) {
+            path = `/${BshcClient.PATH_PREFIX}/userdefinedstates/${id}`;
+        } else {
+            path = `/${BshcClient.PATH_PREFIX}/userdefinedstates`;
+        }
+        return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions(bshbCallOptions));
+    }
+
+    /**
+     * Set the state of a user defined state identified by the specified id.
+     *
+     * @param id
+     *        identifier of the user defined state
+     * @param state
+     *        activate or deactivate the state
+     * @param bshbCallOptions
+     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     * return bshb response object
+     */
+    public setUserDefinedState(
+        id: string, state: boolean, bshbCallOptions?: BshbCallOptions
+    ): Observable<BshbResponse<any[]>> {
+        const data = `{"@type": "userDefinedState","state": ${state}}`;
+        return this.putState(`/${BshcClient.PATH_PREFIX}/userdefinedstates/${id}`, data, bshbCallOptions);
+    }
+
+    /**
      * Get alarm state
      * @param bshbCallOptions
      *        define custom headers, etc. Some values may be overwritten. E.g. host
