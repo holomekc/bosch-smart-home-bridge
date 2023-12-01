@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2023-12-01
+### Changed
+- Change user defined states signature
+
 ## [1.3.2] - 2023-11-30
 ### Added
 - User defined states support added

@@ -235,23 +235,14 @@ export class BshcClient extends AbstractBshcClient {
     }
 
     /**
-     * Get the user defined states
-     *
-     * @param bshbCallOptions
-     *        define custom headers, etc. Some values may be overwritten. E.g. host
-     * return bshb response object
-     */
-    public getUserDefinedStates(): Observable<BshbResponse<any[]>>;
-    /**
-     * Get the user defined state with the specified id.
+     * Get the user defined state with the specified id or all user defined state if the id is undefined.
      *
      * @param id
-     *        identifier of the user defined state
+     *        (optional) identifier of the user defined state
      * @param bshbCallOptions
-     *        define custom headers, etc. Some values may be overwritten. E.g. host
+     *        (optional) define custom headers, etc. Some values may be overwritten. E.g. host
      * return bshb response object
      */
-    public getUserDefinedStates(id: string): Observable<BshbResponse<any[]>>;
     public getUserDefinedStates(id?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
         let path;
         if (id) {
