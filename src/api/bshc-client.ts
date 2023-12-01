@@ -268,7 +268,8 @@ export class BshcClient extends AbstractBshcClient {
         id: string, state: boolean, bshbCallOptions?: BshbCallOptions
     ): Observable<BshbResponse<any[]>> {
         const data = `{"@type": "userDefinedState","state": ${state}}`;
-        return this.putState(`/${BshcClient.PATH_PREFIX}/userdefinedstates/${id}`, data, bshbCallOptions);
+        return this.simpleCall(BshcClient.COMMON_PORT, 'PUT',
+            `/${BshcClient.PATH_PREFIX}/userdefinedstates/${id}`, data, this.getOptions(bshbCallOptions));
     }
 
     /**

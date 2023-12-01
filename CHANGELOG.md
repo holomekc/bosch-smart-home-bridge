@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.5] - 2023-12-01
+### Fixed
+- Fix setting user defined data
+
 ## [1.3.4] - 2023-12-01
 ### Fixed
 - Change user defined states signature
