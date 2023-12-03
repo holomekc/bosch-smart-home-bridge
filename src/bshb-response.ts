@@ -5,21 +5,22 @@ import * as http from "http";
  * which provides detailed information about response. Furthermore, it contains the parsed response <T>.
  */
 export class BshbResponse<T> {
+  constructor(
+    private _incomingMessage: http.IncomingMessage,
+    private _parsedResponse: T
+  ) {}
 
-    constructor(private _incomingMessage: http.IncomingMessage, private _parsedResponse: T) {
-    }
+  /**
+   * Get detailed information about HTTP response
+   */
+  get incomingMessage(): http.IncomingMessage {
+    return this._incomingMessage;
+  }
 
-    /**
-     * Get detailed information about HTTP response
-     */
-    get incomingMessage(): http.IncomingMessage {
-        return this._incomingMessage;
-    }
-
-    /**
-     * Get parsed response object
-     */
-    get parsedResponse(): T {
-        return this._parsedResponse;
-    }
+  /**
+   * Get parsed response object
+   */
+  get parsedResponse(): T {
+    return this._parsedResponse;
+  }
 }

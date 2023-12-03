@@ -5,6 +5,6 @@
  * @since 06.01.2020
  */
 export interface PollingResponseError extends Error {
-    code: number,
-    message: string,
+  code: number;
+  message: string;
 }

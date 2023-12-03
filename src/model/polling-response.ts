@@ -1,4 +1,4 @@
-import {PollingResponseError} from "./polling-response-error";
+import { PollingResponseError } from "./polling-response-error";
 
 /**
  * Model of polling response
@@ -7,7 +7,7 @@ import {PollingResponseError} from "./polling-response-error";
  * @since 06.01.2020
  */
 export interface PollingResponse {
-    jsonrpc: string,
-    result?: any[],
-    error?: PollingResponseError,
+  jsonrpc: string;
+  result?: any[];
+  error?: PollingResponseError;
 }
