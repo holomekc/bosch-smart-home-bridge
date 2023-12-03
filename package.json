@@ -4,13 +4,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rimraf dist && rimraf distTest",
-    "build:ts": "tsc -p tsconfig.json && tsc -p tsconfig.test.json",
+    "clean": "rimraf dist",
+    "build:ts": "tsc -p tsconfig.app.json && tsc -p tsconfig.spec.json",
     "build": "npm run clean && npm run build:ts",
     "lint": "eslint --ext .ts src",
     "lint:fix": "eslint --ext .ts src --fix",
     "prettier": "prettier --write .",
-    "test": "npm run build && node distTest/test/test.js"
+    "test": "npm run build && jasmine --config=jasmine.json"
   },
   "keywords": [
     "Bosch Smart Home",
@@ -37,17 +37,18 @@
     "uuid": "9.0.1"
   },
   "devDependencies": {
+    "@tsconfig/node20": "20.1.2",
+    "@types/jasmine": "5.1.4",
     "@types/node": "20.10.2",
     "@types/uuid": "9.0.7",
-    "@types/node-forge": "1.3.10",
     "@typescript-eslint/eslint-plugin": "6.13.1",
     "@typescript-eslint/parser": "6.13.1",
-    "@tsconfig/node20": "20.1.2",
     "eslint": "8.55.0",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-prettier": "5.0.1",
     "eslint-plugin-prefer-arrow": "1.2.3",
+    "eslint-plugin-prettier": "5.0.1",
     "eslint-plugin-unused-imports": "3.0.0",
+    "jasmine": "5.1.0",
     "prettier": "3.1.0",
     "prettier-eslint": "16.1.2",
     "rimraf": "5.0.5",

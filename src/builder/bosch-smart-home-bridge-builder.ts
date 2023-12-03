@@ -105,7 +105,6 @@ export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey 
   /**
    * Build {@link BoschSmartHomeBridge}. Required properties are: <br>
    *     - host <br>
-   *     - identifier <br>
    *     - clientCert <br>
    *     - clientPrivateKey <br>
    */
