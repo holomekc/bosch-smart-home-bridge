@@ -1,12 +1,17 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tests" type="mocha-javascript-test-runner">
+  <configuration default="false" name="Tests E2E Template" type="mocha-javascript-test-runner">
     <node-interpreter>project</node-interpreter>
     <node-options />
     <mocha-package>$PROJECT_DIR$/node_modules/mocha</mocha-package>
     <working-directory>$PROJECT_DIR$</working-directory>
     <pass-parent-env>true</pass-parent-env>
+    <envs>
+      <env name="BSHC_CERT" value="" />
+      <env name="BSHC_HOST" value="" />
+      <env name="BSHC_PRIV" value="" />
+    </envs>
     <ui>bdd</ui>
-    <extra-mocha-options>--grep should --exit</extra-mocha-options>
+    <extra-mocha-options>--grep e2e --exit</extra-mocha-options>
     <test-kind>DIRECTORY</test-kind>
     <test-directory>$PROJECT_DIR$/test</test-directory>
     <recursive>true</recursive>
