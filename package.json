@@ -10,7 +10,7 @@
     "lint": "eslint --ext .ts src",
     "lint:fix": "eslint --ext .ts src --fix",
     "prettier": "prettier --write .",
-    "test": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha"
+    "test": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --exit"
   },
   "keywords": [
     "Bosch Smart Home",
