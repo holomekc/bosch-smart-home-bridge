@@ -10,6 +10,7 @@ dist.spec
 .github
 .eslintrc.json
 .travis.yml
+.nyc_output
 gulpfile.js
 
 tsconfig.app.json
