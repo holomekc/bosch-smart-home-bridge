@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import { BshbUtils } from "../src/bshb-utils";
-import { BoschSmartHomeBridge, BoschSmartHomeBridgeBuilder } from "../src";
-import { createBshcRouter } from "./bshc-mock";
+import { BoschSmartHomeBridge, BoschSmartHomeBridgeBuilder, BshbUtils } from "../src";
+import { DefaultTestLogger, resetBshcAdminRouter, resetBshcRouter } from "./bshc-mock";
 import { Router } from "express";
 
 describe("BoschSmartHomeBridge", () => {
   let bshb: BoschSmartHomeBridge;
   let bshc: Router;
+  let bshcAdmin: Router;
   before(() => {
     const certResult = BshbUtils.generateClientCertificate();
     bshb = BoschSmartHomeBridgeBuilder.builder()
@@ -14,28 +14,21 @@ describe("BoschSmartHomeBridge", () => {
       .withClientCert(certResult.cert)
       .withClientPrivateKey(certResult.private)
       .withIgnoreCertificateCheck(true)
-      /*.withLogger(
-        new (class implements Logger {
-          fine(message?: any, ...optionalParams: any[]): void {}
-
-          debug(message?: any, ...optionalParams: any[]): void {}
-
-          info(message?: any, ...optionalParams: any[]): void {}
-
-          warn(message?: any, ...optionalParams: any[]): void {}
-
-          error(message?: any, ...optionalParams: any[]): void {}
-        })()
-      )*/
+      .withLogger(new DefaultTestLogger())
       .build();
   });
 
   beforeEach(() => {
-    bshc = createBshcRouter();
+    bshc = resetBshcRouter();
+    bshcAdmin = resetBshcAdminRouter();
   });
 
   it("test not paired", (done) => {
     bshc.get("/smarthome/rooms", (req, res) => {
+      res.statusCode = 401;
+      res.json({});
+    });
+    bshcAdmin.post("/smarthome/clients", (req, res) => {
       res.statusCode = 401;
       res.json({});
     });

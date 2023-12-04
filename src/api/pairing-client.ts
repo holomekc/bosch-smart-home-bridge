@@ -53,8 +53,7 @@ export class PairingClient extends AbstractBshcClient {
       token: string;
     }>
   > {
-    const clientData = new BoschClientData(name, identifier, certificate);
-    const postData = JSON.stringify(clientData);
+    const postData = new BoschClientData(name, identifier, certificate);
 
     return new Observable<BshbResponse<{ url: string; token: string }>>((subscriber) => {
       this.simpleCall<{ url: string; token: string }>(

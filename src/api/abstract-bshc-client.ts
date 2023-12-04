@@ -8,6 +8,8 @@ import { BshbError } from "../error/bshb-error";
 import { BshbErrorType } from "../error/bshb-error-type";
 import { BshbCallOptions } from "../bshb-call-options";
 import { BshbUtils } from "../bshb-utils";
+import * as util from "util";
+import * as http from "http";
 
 /**
  * This class provides a simple call for all defined clients
@@ -101,8 +103,6 @@ export abstract class AbstractBshcClient {
       requestOptions.headers["Systempassword"] = Buffer.from(options.systemPassword).toString("base64");
     }
 
-    this.logger.fine("requestOptions: ", requestOptions);
-
     let postData: string | undefined = undefined;
     if (data) {
       if (typeof data === "string") {
@@ -113,27 +113,18 @@ export abstract class AbstractBshcClient {
       requestOptions.headers["Content-Length"] = postData.length;
     }
 
-    this.logger.fine("");
-    this.logger.fine(
-      "call:\n" +
-        requestOptions.method +
-        " | " +
-        requestOptions.hostname +
-        ":" +
-        requestOptions.port +
-        requestOptions.path
+    this.logger.debug(
+      `
+Request: (${requestOptions.method}) ${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}
+Headers:
+${util.inspect(requestOptions.headers, { colors: true })}
+Body:
+${util.inspect(data, { colors: true, depth: 10 })}
+`
     );
-    this.logger.fine("headers:\n", requestOptions.headers);
-    this.logger.fine("body:\n", postData ? postData : "");
-    this.logger.fine("");
 
     return new Observable<BshbResponse<T>>((observer) => {
       const req = https.request(requestOptions, (res) => {
-        this.logger.fine("");
-        this.logger.fine("response information:");
-        this.logger.fine("status:", res.statusCode);
-        this.logger.fine("headers:", res.headers);
-
         const chunks: any[] = [];
 
         res
@@ -147,31 +138,34 @@ export abstract class AbstractBshcClient {
               dataString = data.toString("utf-8");
             }
 
-            this.logger.fine("content: ", dataString);
-            this.logger.fine("");
-
             try {
-              let parsedData = undefined;
-              if (dataString) {
-                parsedData = JSON.parse(dataString);
-              }
-
               if (res.statusCode && res.statusCode >= 300) {
+                this.logResponse(requestOptions, res, dataString);
+
                 this.handleError(
                   observer,
                   BshbErrorType.ERROR,
                   `call to BSHC failed with HTTP status=${res.statusCode}`
                 );
               } else {
+                let parsedData = undefined;
+                if (dataString) {
+                  parsedData = JSON.parse(dataString);
+                }
+
+                this.logResponse(requestOptions, res, parsedData);
+
                 observer.next(new BshbResponse<T>(res, parsedData));
               }
             } catch (e) {
+              this.logResponse(requestOptions, res, dataString);
               observer.error(new BshbError("error during parsing response from BSHC", BshbErrorType.PARSING, e));
             } finally {
               observer.complete();
             }
           })
           .on("error", (err) => {
+            this.logResponse(requestOptions, res, undefined);
             this.handleError(observer, BshbErrorType.ERROR, err);
           });
       });
@@ -197,17 +191,28 @@ export abstract class AbstractBshcClient {
   }
 
   private handleError<T>(observer: Subscriber<BshbResponse<T>>, errorType: BshbErrorType, errorDetails: any): void {
-    this.logger.error("error during call to BSHC: ", errorDetails);
+    this.logger.error("Error during call to BSHC: ", errorDetails);
     try {
       if (errorDetails instanceof Error) {
-        observer.error(new BshbError("error during call to BSHC: ", errorType, errorDetails));
+        observer.error(new BshbError("Error during call to BSHC: ", errorType, errorDetails));
       } else if (typeof errorDetails === "string") {
         observer.error(new BshbError(errorDetails, errorType));
       } else {
-        observer.error(new BshbError("error during call to BSHC", errorType));
+        observer.error(new BshbError("Error during call to BSHC", errorType));
       }
     } finally {
       observer.complete();
     }
+  }
+
+  private logResponse(requestOptions: RequestOptions, res: http.IncomingMessage, data?: any) {
+    this.logger.debug(`
+Response: (${requestOptions.method}) ${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}
+Status: ${util.inspect(res.statusCode, { colors: true })}
+Headers:
+${util.inspect(res.headers, { colors: true })}
+Content:
+${typeof data === "object" ? util.inspect(data, { colors: true }) : data}
+`);
   }
 }
