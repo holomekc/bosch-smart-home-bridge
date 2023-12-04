@@ -1,13 +1,19 @@
+# sources
 src
 test
 wiki
 
+# build
+dist.spec
+.prettierignore
+.prettierrc
+.github
 .eslintrc.json
 .travis.yml
 gulpfile.js
 
-tsconfig.build.json
-tsconfig.test.json
+tsconfig.app.json
+tsconfig.spec.json
 tsconfig.json
 
 # Content from gitignore

@@ -6,7 +6,8 @@ on:
   push:
     branches:
       - "*"
-  pull_request: {}
+  pull_request: { }
+  workflow_dispatch:
 
 # Cancel previous PR/branch runs when a new commit is pushed
 concurrency:
@@ -19,27 +20,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [ 18.x, 20.x ]
 
     steps:
-      - name: lint
-        run: npm run lint
-
-  # Runs adapter tests on all supported node versions and OSes
-  adapter-tests:
-    needs: [check-and-lint]
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    steps:
-      - uses: ioBroker/testing-action-adapter@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          os: ${{ matrix.os }}
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
-          build: true
+      - name: lint
+        run: npm run lint
+      - name: test
+        run: npm run test

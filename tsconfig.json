@@ -1,8 +1,12 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
+  "extends": "./node_modules/@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }
