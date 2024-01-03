@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.4.0] - 2023-12-01
+## [1.4.0] - 2024-01-03
+
+### Changed
+
+- Logging regarding pairing. Add information regarding controller v1 and v2.
+
+## [1.4.0] - 2024-01-03
 
 ### Changed
 

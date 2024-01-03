@@ -1,7 +1,7 @@
 import { Logger } from "./logger";
 import { PairingClient } from "./api/pairing-client";
-import { catchError, retry } from "rxjs/operators";
-import { Observable, throwError } from "rxjs";
+import { retry } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { BshcClient } from "./api/bshc-client";
 import { CertificateStorage } from "./certificate-storage";
 import { BshbResponse } from "./bshb-response";
@@ -116,15 +116,11 @@ export class BoschSmartHomeBridge {
   ): Observable<BshbResponse<{ url: string; token: string }>> {
     return new Observable((observer) => {
       this.logger.info(
-        "Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing."
+        "Start pairing. Activate pairing on Bosch Smart Home Controller by pressing button until flashing. Controller v1: 3s, Controller v2: 1s"
       );
       this.pairingClient
         .sendPairingRequest(identifier, name, this.certificateStorage.clientCert, systemPassword)
         .pipe(
-          catchError((err) => {
-            this.logger.warn(`Could not pair client. Did you press the paring button? Error details: ${err}`);
-            return throwError(err);
-          }),
           retry({
             count: pairingAttempts,
             delay: pairingDelay,
@@ -144,7 +140,7 @@ export class BoschSmartHomeBridge {
           },
           error: (error) => {
             this.logger.warn(
-              `Could not pair client. Did you press the paring button on Bosch Smart Home Controller? Error details: ${error}`
+              `Could not pair client. Did you press the pairing button on Bosch Smart Home Controller? Controller v1: 3s, Controller v2: 1s. Error details: ${error}`
             );
             observer.error(error);
           },
