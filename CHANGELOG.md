@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2023-12-01
+
+### Changed
+
+- Project setup
+- Logging
+
 ## [1.3.5] - 2023-12-01
 
 ### Fixed
@@ -77,7 +84,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Allow to ignore server certificate check. Although this is insecure. It allows users to skip the check in case the root ca is expiring. Everything is local so less critical.
+- Allow to ignore server certificate check. Although this is insecure. It allows users to skip the check in case the
+  root ca is expiring. Everything is local so less critical.
 
 ## [1.1.6] - 2022-10-02
 
@@ -120,9 +128,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - New services:
-  - Water alarm
-  - Air purity
-  - Motion lights
+    - Water alarm
+    - Air purity
+    - Motion lights
 
 ### Changed
 
@@ -281,7 +289,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- response is wrapped into BshbResponse. Which provides data as before but also details about the HTTP request / response
+- response is wrapped into BshbResponse. Which provides data as before but also details about the HTTP request /
+  response
 - certificate generation only triggered by pairIfNeeded method and not by all other methods
 
 ## [0.0.6] - 2019-10-25
