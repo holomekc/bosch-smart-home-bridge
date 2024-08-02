@@ -280,7 +280,7 @@ export class BshcClient extends AbstractBshcClient {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
       "PUT",
-      `/${BshcClient.PATH_PREFIX}/automation/rules/${scenarioId}/trigger`,
+      `/${BshcClient.PATH_PREFIX}/automation/rules/${automationId}/trigger`,
       null,
       this.getOptions(bshbCallOptions)
     );
