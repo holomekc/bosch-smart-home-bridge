@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2024-08-02
+
+### Changed
+
+- Update to api-version 3.12 of BSHC
+- Automations support added, get and trigger automations
+
 ## [1.4.0] - 2024-01-03
 
 ### Changed
