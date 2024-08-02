@@ -86,7 +86,7 @@ export abstract class AbstractBshcClient {
 
     requestOptions.headers["Content-Type"] = "application/json";
     requestOptions.headers["Accept"] = "application/json";
-    requestOptions.headers["api-version"] = "3.2";
+    requestOptions.headers["api-version"] = "3.12";
 
     if (options && options.bshbCallOptions && options.bshbCallOptions) {
       Object.keys(options.bshbCallOptions).forEach((key) => {
