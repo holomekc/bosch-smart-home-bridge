@@ -279,7 +279,7 @@ export class BshcClient extends AbstractBshcClient {
   public triggerAutomation(automationId: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "POST",
+      "PUT",
       `/${BshcClient.PATH_PREFIX}/automation/rules/${scenarioId}/trigger`,
       null,
       this.getOptions(bshbCallOptions)
