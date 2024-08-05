@@ -253,6 +253,40 @@ export class BshcClient extends AbstractBshcClient {
   }
 
   /**
+   * Get all automations
+   * @param bshbCallOptions
+   *        define custom headers, etc. Some values may be overwritten. E.g. host
+   * @return bshb response object
+   */
+  public getAutomations(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+    return this.simpleCall(
+      BshcClient.COMMON_PORT,
+      "GET",
+      `/${BshcClient.PATH_PREFIX}/automation/rules`,
+      null,
+      this.getOptions(bshbCallOptions)
+    );
+  }
+
+  /**
+   * Trigger the specified automation
+   * @param automationId
+   *        identifier of an automation
+   * @param bshbCallOptions
+   *        define custom headers, etc. Some values may be overwritten. E.g. host
+   * @return bshb response object
+   */
+  public triggerAutomation(automationId: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    return this.simpleCall(
+      BshcClient.COMMON_PORT,
+      "PUT",
+      `/${BshcClient.PATH_PREFIX}/automation/rules/${automationId}/trigger`,
+      null,
+      this.getOptions(bshbCallOptions)
+    );
+  }
+
+  /**
    * Get all scenarios
    * @param bshbCallOptions
    *        define custom headers, etc. Some values may be overwritten. E.g. host
