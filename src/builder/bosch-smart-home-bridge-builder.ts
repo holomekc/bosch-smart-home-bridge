@@ -1,8 +1,8 @@
-import { Host } from "./host";
-import { DefaultLogger, Logger } from "../logger";
-import { BoschSmartHomeBridge } from "../bosch-smart-home-bridge";
-import { ClientCert } from "./client-cert";
-import { ClientKey } from "./client-key";
+import { Host } from './host';
+import { DefaultLogger, Logger } from '../logger';
+import { BoschSmartHomeBridge } from '../bosch-smart-home-bridge';
+import { ClientCert } from './client-cert';
+import { ClientKey } from './client-key';
 
 /**
  * Builder for creating BoschSmartHomeBridge to make sure that properties are correctly set.
@@ -110,16 +110,16 @@ export class BoschSmartHomeBridgeBuilder implements Host, ClientCert, ClientKey 
    */
   public build(): BoschSmartHomeBridge {
     if (!this.host) {
-      throw new Error("host is a required property. withHost must be called with a suitable value.");
+      throw new Error('host is a required property. withHost must be called with a suitable value.');
     }
 
     if (!this.clientCert) {
-      throw new Error("clientCert is a required property. withClientCert must be called with a suitable value.");
+      throw new Error('clientCert is a required property. withClientCert must be called with a suitable value.');
     }
 
     if (!this.clientPrivateKey) {
       throw new Error(
-        "clientPrivateKey is a required property. withClientPrivateKey must be called with a suitable value"
+        'clientPrivateKey is a required property. withClientPrivateKey must be called with a suitable value'
       );
     }
 

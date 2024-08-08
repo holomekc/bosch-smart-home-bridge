@@ -5,7 +5,7 @@ name: Test
 on:
   push:
     branches:
-      - "*"
+      - '*'
   pull_request: { }
   workflow_dispatch:
 
@@ -29,10 +29,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.yarn
+          key: test-${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Enable corepack for Yarn
+        run: corepack enable
+
       - name: install
-        run: npm ci
+        run: yarn install
       - name: lint
-        run: npm run lint
+        run: yarn run lint
       - name: test
-        run: npm run test
+        run: yarn run test

@@ -3,7 +3,5 @@
   "compilerOptions": {
     "outDir": "./dist.spec"
   },
-  "include": [
-    "test/**/*.spec.ts"
-  ]
+  "include": ["test/**/*.spec.ts"]
 }

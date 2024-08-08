@@ -1,4 +1,4 @@
-import { ClientKey } from "./client-key";
+import { ClientKey } from './client-key';
 
 /**
  * Part of {@link BoschSmartHomeBridgeBuilder} to make sure that required properties are set.

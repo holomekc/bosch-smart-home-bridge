@@ -1,7 +1,7 @@
-import express from "express";
-import bodyParser from "body-parser";
-import { BshbUtils, Logger } from "../src";
-import https from "https";
+import express from 'express';
+import bodyParser from 'body-parser';
+import { BshbUtils, Logger } from '../src';
+import https from 'https';
 
 const bshc = express();
 let bshcRouter = express.Router();
@@ -39,26 +39,26 @@ adminServer.listen(8443, () => {});
 
 export class DefaultTestLogger implements Logger {
   fine(message?: any, ...optionalParams: any[]): void {
-    DefaultTestLogger.log("debug", message, ...optionalParams);
+    DefaultTestLogger.log('debug', message, ...optionalParams);
   }
 
   debug(message?: any, ...optionalParams: any[]): void {
-    DefaultTestLogger.log("debug", message, ...optionalParams);
+    DefaultTestLogger.log('debug', message, ...optionalParams);
   }
 
   info(message?: any, ...optionalParams: any[]): void {
-    DefaultTestLogger.log("info", message, ...optionalParams);
+    DefaultTestLogger.log('info', message, ...optionalParams);
   }
 
   warn(message?: any, ...optionalParams: any[]): void {
-    DefaultTestLogger.log("warn", message, ...optionalParams);
+    DefaultTestLogger.log('warn', message, ...optionalParams);
   }
 
   error(message?: any, ...optionalParams: any[]): void {
-    DefaultTestLogger.log("error", message, ...optionalParams);
+    DefaultTestLogger.log('error', message, ...optionalParams);
   }
 
-  private static log(msgType: "debug" | "info" | "warn" | "error", message?: any, ...optionalParams: any[]) {
+  private static log(msgType: 'debug' | 'info' | 'warn' | 'error', message?: any, ...optionalParams: any[]) {
     if (optionalParams[0] && optionalParams[0].ca) {
       optionalParams = [
         {

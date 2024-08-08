@@ -1,15 +1,15 @@
-import { Observable, Subscriber } from "rxjs";
-import * as https from "https";
-import { RequestOptions } from "https";
-import { Logger } from "../logger";
-import { CertificateStorage } from "../certificate-storage";
-import { BshbResponse } from "../bshb-response";
-import { BshbError } from "../error/bshb-error";
-import { BshbErrorType } from "../error/bshb-error-type";
-import { BshbCallOptions } from "../bshb-call-options";
-import { BshbUtils } from "../bshb-utils";
-import * as util from "util";
-import * as http from "http";
+import { Observable, Subscriber } from 'rxjs';
+import * as https from 'https';
+import { RequestOptions } from 'https';
+import { Logger } from '../logger';
+import { CertificateStorage } from '../certificate-storage';
+import { BshbResponse } from '../bshb-response';
+import { BshbError } from '../error/bshb-error';
+import { BshbErrorType } from '../error/bshb-error-type';
+import { BshbCallOptions } from '../bshb-call-options';
+import { BshbUtils } from '../bshb-utils';
+import * as util from 'util';
+import * as http from 'http';
 
 /**
  * This class provides a simple call for all defined clients
@@ -71,7 +71,7 @@ export abstract class AbstractBshcClient {
     requestOptions.rejectUnauthorized = !this.ignoreServerCertificateCheck;
     (requestOptions as any).checkServerIdentity = (host: string) => {
       // we cannot use tls.checkServerIdentity because it would fail altname check
-      host = "" + host;
+      host = '' + host;
 
       if (host === this.host) {
         return undefined;
@@ -84,12 +84,12 @@ export abstract class AbstractBshcClient {
       requestOptions.headers = {};
     }
 
-    requestOptions.headers["Content-Type"] = "application/json";
-    requestOptions.headers["Accept"] = "application/json";
-    requestOptions.headers["api-version"] = "3.12";
+    requestOptions.headers['Content-Type'] = 'application/json';
+    requestOptions.headers['Accept'] = 'application/json';
+    requestOptions.headers['api-version'] = '3.12';
 
     if (options && options.bshbCallOptions && options.bshbCallOptions) {
-      Object.keys(options.bshbCallOptions).forEach((key) => {
+      Object.keys(options.bshbCallOptions).forEach(key => {
         (requestOptions as any)[key] = (options.bshbCallOptions as any)[key];
       });
     }
@@ -100,17 +100,17 @@ export abstract class AbstractBshcClient {
     }
 
     if (options && options.systemPassword) {
-      requestOptions.headers["Systempassword"] = Buffer.from(options.systemPassword).toString("base64");
+      requestOptions.headers['Systempassword'] = Buffer.from(options.systemPassword).toString('base64');
     }
 
     let postData: string | undefined = undefined;
     if (data) {
-      if (typeof data === "string") {
+      if (typeof data === 'string') {
         postData = data;
       } else {
         postData = JSON.stringify(data);
       }
-      requestOptions.headers["Content-Length"] = postData.length;
+      requestOptions.headers['Content-Length'] = postData.length;
     }
 
     this.logger.debug(
@@ -123,19 +123,19 @@ ${util.inspect(data, { colors: true, depth: 10 })}
 `
     );
 
-    return new Observable<BshbResponse<T>>((observer) => {
-      const req = https.request(requestOptions, (res) => {
+    return new Observable<BshbResponse<T>>(observer => {
+      const req = https.request(requestOptions, res => {
         const chunks: any[] = [];
 
         res
-          .on("data", (data) => {
+          .on('data', data => {
             chunks.push(data);
           })
-          .on("end", () => {
+          .on('end', () => {
             let dataString = undefined;
             if (chunks.length > 0) {
               const data = Buffer.concat(chunks);
-              dataString = data.toString("utf-8");
+              dataString = data.toString('utf-8');
             }
 
             try {
@@ -159,12 +159,12 @@ ${util.inspect(data, { colors: true, depth: 10 })}
               }
             } catch (e) {
               this.logResponse(requestOptions, res, dataString);
-              observer.error(new BshbError("error during parsing response from BSHC", BshbErrorType.PARSING, e));
+              observer.error(new BshbError('error during parsing response from BSHC', BshbErrorType.PARSING, e));
             } finally {
               observer.complete();
             }
           })
-          .on("error", (err) => {
+          .on('error', err => {
             this.logResponse(requestOptions, res, undefined);
             this.handleError(observer, BshbErrorType.ERROR, err);
           });
@@ -172,14 +172,14 @@ ${util.inspect(data, { colors: true, depth: 10 })}
 
       // error and socket handling
       req
-        .on("error", (err) => {
+        .on('error', err => {
           this.handleError(observer, BshbErrorType.ERROR, err);
         })
-        .on("abort", () => {
-          this.handleError(observer, BshbErrorType.ABORT, "call to BSHC aborted by client");
+        .on('abort', () => {
+          this.handleError(observer, BshbErrorType.ABORT, 'call to BSHC aborted by client');
         })
-        .on("timeout", () => {
-          this.handleError(observer, BshbErrorType.TIMEOUT, "timeout during call to BSHC");
+        .on('timeout', () => {
+          this.handleError(observer, BshbErrorType.TIMEOUT, 'timeout during call to BSHC');
         });
 
       if (postData) {
@@ -191,14 +191,14 @@ ${util.inspect(data, { colors: true, depth: 10 })}
   }
 
   private handleError<T>(observer: Subscriber<BshbResponse<T>>, errorType: BshbErrorType, errorDetails: any): void {
-    this.logger.error("Error during call to BSHC: ", errorDetails);
+    this.logger.error('Error during call to BSHC: ', errorDetails);
     try {
       if (errorDetails instanceof Error) {
-        observer.error(new BshbError("Error during call to BSHC: ", errorType, errorDetails));
-      } else if (typeof errorDetails === "string") {
+        observer.error(new BshbError('Error during call to BSHC: ', errorType, errorDetails));
+      } else if (typeof errorDetails === 'string') {
         observer.error(new BshbError(errorDetails, errorType));
       } else {
-        observer.error(new BshbError("Error during call to BSHC", errorType));
+        observer.error(new BshbError('Error during call to BSHC', errorType));
       }
     } finally {
       observer.complete();
@@ -212,7 +212,7 @@ Status: ${util.inspect(res.statusCode, { colors: true })}
 Headers:
 ${util.inspect(res.headers, { colors: true })}
 Content:
-${typeof data === "object" ? util.inspect(data, { colors: true }) : data}
+${typeof data === 'object' ? util.inspect(data, { colors: true }) : data}
 `);
   }
 }

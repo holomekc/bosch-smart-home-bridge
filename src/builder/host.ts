@@ -1,4 +1,4 @@
-import { ClientCert } from "./client-cert";
+import { ClientCert } from './client-cert';
 
 /**
  * Part of {@link BoschSmartHomeBridgeBuilder} to make sure that required properties are set.

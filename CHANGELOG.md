@@ -141,9 +141,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - New services:
-    - Water alarm
-    - Air purity
-    - Motion lights
+  - Water alarm
+  - Air purity
+  - Motion lights
 
 ### Changed
 

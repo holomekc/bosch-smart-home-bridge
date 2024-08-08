@@ -1,16 +1,16 @@
-import { expect } from "chai";
-import { BoschSmartHomeBridge, BoschSmartHomeBridgeBuilder, BshbUtils } from "../src";
-import { DefaultTestLogger, resetBshcAdminRouter, resetBshcRouter } from "./bshc-mock";
-import { Router } from "express";
+import { expect } from 'chai';
+import { BoschSmartHomeBridge, BoschSmartHomeBridgeBuilder, BshbUtils } from '../src';
+import { DefaultTestLogger, resetBshcAdminRouter, resetBshcRouter } from './bshc-mock';
+import { Router } from 'express';
 
-describe("BoschSmartHomeBridge", () => {
+describe('BoschSmartHomeBridge', () => {
   let bshb: BoschSmartHomeBridge;
   let bshc: Router;
   let bshcAdmin: Router;
   before(() => {
     const certResult = BshbUtils.generateClientCertificate();
     bshb = BoschSmartHomeBridgeBuilder.builder()
-      .withHost("127.0.0.1")
+      .withHost('127.0.0.1')
       .withClientCert(certResult.cert)
       .withClientPrivateKey(certResult.private)
       .withIgnoreCertificateCheck(true)
@@ -23,49 +23,49 @@ describe("BoschSmartHomeBridge", () => {
     bshcAdmin = resetBshcAdminRouter();
   });
 
-  it("should not be paired yet, and button is not pressed", (done) => {
-    bshc.get("/smarthome/rooms", (req, res) => {
+  it('should not be paired yet, and button is not pressed', done => {
+    bshc.get('/smarthome/rooms', (req, res) => {
       res.statusCode = 401;
       res.json({});
     });
-    bshcAdmin.post("/smarthome/clients", (req, res) => {
+    bshcAdmin.post('/smarthome/clients', (req, res) => {
       res.statusCode = 401;
       res.json({});
     });
 
     const identifier = BshbUtils.generateIdentifier();
 
-    bshb.pairIfNeeded("test", identifier, "test", 1000, 0).subscribe({
-      next: (value) => expect.fail("Expected not connected"),
-      error: (error) => {
+    bshb.pairIfNeeded('test', identifier, 'test', 1000, 0).subscribe({
+      next: value => expect.fail('Expected not connected'),
+      error: error => {
         expect(error).not.to.be.null;
         done();
       },
       complete: () => {
-        expect.fail("Expected not connected");
+        expect.fail('Expected not connected');
       },
     });
   });
 
-  it("should not be paired yet, and button is pressed", (done) => {
-    bshc.get("/smarthome/rooms", (req, res) => {
+  it('should not be paired yet, and button is pressed', done => {
+    bshc.get('/smarthome/rooms', (req, res) => {
       res.statusCode = 401;
       res.json({});
     });
-    bshcAdmin.post("/smarthome/clients", (req, res) => {
+    bshcAdmin.post('/smarthome/clients', (req, res) => {
       res.json({
-        url: "http://localhost:8884",
-        token: "someToken",
+        url: 'http://localhost:8884',
+        token: 'someToken',
       });
     });
 
     const identifier = BshbUtils.generateIdentifier();
 
     let response: any;
-    bshb.pairIfNeeded("test", identifier, "test", 1000, 0).subscribe({
-      next: (value) => (response = value),
-      error: (error) => {
-        expect.fail(error, "Expected that pairing is successful");
+    bshb.pairIfNeeded('test', identifier, 'test', 1000, 0).subscribe({
+      next: value => (response = value),
+      error: error => {
+        expect.fail(error, 'Expected that pairing is successful');
       },
       complete: () => {
         expect(response).to.be.not.null;
@@ -76,14 +76,14 @@ describe("BoschSmartHomeBridge", () => {
     });
   });
 
-  it("should already be paired", (done) => {
-    bshc.get("/smarthome/rooms", (req, res) => {
+  it('should already be paired', done => {
+    bshc.get('/smarthome/rooms', (req, res) => {
       res.json([
         {
-          "@type": "room",
-          id: "hz_1",
-          iconId: "icon_room_living_room",
-          name: "Wohnzimmer",
+          '@type': 'room',
+          id: 'hz_1',
+          iconId: 'icon_room_living_room',
+          name: 'Wohnzimmer',
         },
       ]);
     });
@@ -91,10 +91,10 @@ describe("BoschSmartHomeBridge", () => {
     const identifier = BshbUtils.generateIdentifier();
 
     let response: any;
-    bshb.pairIfNeeded("test", identifier, "test", 1000, 0).subscribe({
-      next: (value) => (response = value),
-      error: (error) => {
-        expect.fail(error, "Expected that rooms returns a result");
+    bshb.pairIfNeeded('test', identifier, 'test', 1000, 0).subscribe({
+      next: value => (response = value),
+      error: error => {
+        expect.fail(error, 'Expected that rooms returns a result');
       },
       complete: () => {
         expect(response).to.be.not.null;

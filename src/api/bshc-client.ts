@@ -1,15 +1,15 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { Logger } from "../logger";
-import { CertificateStorage } from "../certificate-storage";
-import { Observable, of } from "rxjs";
-import { AbstractBshcClient } from "./abstract-bshc-client";
-import { map, tap } from "rxjs/operators";
-import { BshbResponse } from "../bshb-response";
-import { BshbCallOptions } from "../bshb-call-options";
-import { PollingResponse } from "../model/polling-response";
-import { BshbError } from "../error/bshb-error";
-import { BshbErrorType } from "../error/bshb-error-type";
+import { Logger } from '../logger';
+import { CertificateStorage } from '../certificate-storage';
+import { Observable, of } from 'rxjs';
+import { AbstractBshcClient } from './abstract-bshc-client';
+import { map, tap } from 'rxjs/operators';
+import { BshbResponse } from '../bshb-response';
+import { BshbCallOptions } from '../bshb-call-options';
+import { PollingResponse } from '../model/polling-response';
+import { BshbError } from '../error/bshb-error';
+import { BshbErrorType } from '../error/bshb-error-type';
 
 /**
  * This client contains some basic calls which are available to contact Bosch Smart Home Controller (BSHC)
@@ -20,7 +20,7 @@ import { BshbErrorType } from "../error/bshb-error-type";
  */
 export class BshcClient extends AbstractBshcClient {
   private static COMMON_PORT = 8444;
-  private static PATH_PREFIX = "smarthome";
+  private static PATH_PREFIX = 'smarthome';
 
   /**
    * Create a new instance of the Bosch Smart Home Controller Client
@@ -69,7 +69,7 @@ export class BshcClient extends AbstractBshcClient {
   public getInformation(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.PAIR_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/information`,
       null,
       this.getOptions(bshbCallOptions)
@@ -85,7 +85,7 @@ export class BshcClient extends AbstractBshcClient {
   public getRooms(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/rooms`,
       null,
       this.getOptions(bshbCallOptions)
@@ -103,7 +103,7 @@ export class BshcClient extends AbstractBshcClient {
   public getRoom(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/rooms/${id}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -139,8 +139,8 @@ export class BshcClient extends AbstractBshcClient {
   public getDevice(deviceId?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any | any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
-      `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ""}`,
+      'GET',
+      `/${BshcClient.PATH_PREFIX}/devices/${deviceId ? deviceId : ''}`,
       null,
       this.getOptions(bshbCallOptions)
     );
@@ -155,10 +155,10 @@ export class BshcClient extends AbstractBshcClient {
    */
   public getDeviceServiceIds(deviceId: string, bshbCallOptions?: BshbCallOptions): Observable<string[]> {
     if (deviceId) {
-      return this.getDeviceServices(deviceId, "all", bshbCallOptions).pipe(
-        map((services) => {
+      return this.getDeviceServices(deviceId, 'all', bshbCallOptions).pipe(
+        map(services => {
           const result: string[] = [];
-          services.parsedResponse.forEach((service) => {
+          services.parsedResponse.forEach(service => {
             // although the library never cared about the response we need to do this here.
             result.push(service.id);
           });
@@ -179,7 +179,7 @@ export class BshcClient extends AbstractBshcClient {
   public getSupportedDeviceTypes(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/configuration/supportedDeviceTypes`,
       null,
       this.getOptions(bshbCallOptions)
@@ -219,7 +219,7 @@ export class BshcClient extends AbstractBshcClient {
    */
   public getDeviceServices(
     deviceId: string | undefined,
-    serviceId: "all",
+    serviceId: 'all',
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<any[]>>;
 
@@ -239,17 +239,17 @@ export class BshcClient extends AbstractBshcClient {
 
   public getDeviceServices(
     deviceId?: string,
-    serviceId?: string | "all",
+    serviceId?: string | 'all',
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<any[]>> {
     let path = `/${BshcClient.PATH_PREFIX}/services`;
     if (deviceId) {
       path = `/${BshcClient.PATH_PREFIX}/devices/${deviceId}/services/`;
-      if (serviceId && serviceId !== "all") {
+      if (serviceId && serviceId !== 'all') {
         path += serviceId;
       }
     }
-    return this.simpleCall(BshcClient.COMMON_PORT, "GET", path, null, this.getOptions(bshbCallOptions));
+    return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions(bshbCallOptions));
   }
 
   /**
@@ -261,7 +261,7 @@ export class BshcClient extends AbstractBshcClient {
   public getAutomations(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/automation/rules`,
       null,
       this.getOptions(bshbCallOptions)
@@ -279,7 +279,7 @@ export class BshcClient extends AbstractBshcClient {
   public triggerAutomation(automationId: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/automation/rules/${automationId}/trigger`,
       null,
       this.getOptions(bshbCallOptions)
@@ -295,7 +295,7 @@ export class BshcClient extends AbstractBshcClient {
   public getScenarios(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/scenarios`,
       null,
       this.getOptions(bshbCallOptions)
@@ -313,7 +313,7 @@ export class BshcClient extends AbstractBshcClient {
   public triggerScenario(scenarioId: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/scenarios/${scenarioId}/triggers`,
       null,
       this.getOptions(bshbCallOptions)
@@ -336,7 +336,7 @@ export class BshcClient extends AbstractBshcClient {
     } else {
       path = `/${BshcClient.PATH_PREFIX}/userdefinedstates`;
     }
-    return this.simpleCall(BshcClient.COMMON_PORT, "GET", path, null, this.getOptions(bshbCallOptions));
+    return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions(bshbCallOptions));
   }
 
   /**
@@ -358,7 +358,7 @@ export class BshcClient extends AbstractBshcClient {
     const data = `{"@type": "userDefinedState","state": ${state}}`;
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/userdefinedstates/${id}`,
       data,
       this.getOptions(bshbCallOptions)
@@ -372,10 +372,10 @@ export class BshcClient extends AbstractBshcClient {
    * @return bshb response object
    */
   public getAlarmState(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    const path = "/devices/intrusionDetectionSystem/services/IntrusionDetectionControl/state";
+    const path = '/devices/intrusionDetectionSystem/services/IntrusionDetectionControl/state';
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}${path}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -398,7 +398,7 @@ export class BshcClient extends AbstractBshcClient {
       value = '"SYSTEM_DISARMED"';
     }
     const data = `{"@type": "intrusionDetectionControlState","value": ${value}}`;
-    return this.putState("devices/intrusionDetectionSystem/services/IntrusionDetectionControl", data, bshbCallOptions);
+    return this.putState('devices/intrusionDetectionSystem/services/IntrusionDetectionControl', data, bshbCallOptions);
   }
 
   /**
@@ -408,10 +408,10 @@ export class BshcClient extends AbstractBshcClient {
    * @return bshb response object
    */
   public getPresenceSimulation(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    const path = "/devices/presenceSimulationService/services/PresenceSimulationConfiguration/state";
+    const path = '/devices/presenceSimulationService/services/PresenceSimulationConfiguration/state';
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}${path}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -429,7 +429,7 @@ export class BshcClient extends AbstractBshcClient {
   public setPresenceSimulation(enable: boolean, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     const data = `{"@type": "presenceSimulationConfigurationState","enabled": ${enable}}`;
     return this.putState(
-      "devices/presenceSimulationService/services/PresenceSimulationConfiguration",
+      'devices/presenceSimulationService/services/PresenceSimulationConfiguration',
       data,
       bshbCallOptions
     );
@@ -449,7 +449,7 @@ export class BshcClient extends AbstractBshcClient {
   public putState(path: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/${path}/state`,
       data,
       this.getOptions(bshbCallOptions)
@@ -465,7 +465,7 @@ export class BshcClient extends AbstractBshcClient {
   public getClients(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/clients`,
       null,
       this.getOptions(bshbCallOptions)
@@ -481,7 +481,7 @@ export class BshcClient extends AbstractBshcClient {
   public getMessages(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/messages`,
       null,
       this.getOptions(bshbCallOptions)
@@ -499,7 +499,7 @@ export class BshcClient extends AbstractBshcClient {
   public deleteMessages(ids: string[], bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/messages/batchDelete`,
       ids,
       this.getOptions(bshbCallOptions)
@@ -517,7 +517,7 @@ export class BshcClient extends AbstractBshcClient {
   public getMessage(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/messages/${id}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -535,7 +535,7 @@ export class BshcClient extends AbstractBshcClient {
   public deleteMessage(id: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "DELETE",
+      'DELETE',
       `/${BshcClient.PATH_PREFIX}/messages/${id}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -550,7 +550,7 @@ export class BshcClient extends AbstractBshcClient {
   public getOpenWindows(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/doors-windows/openwindows`,
       null,
       this.getOptions(bshbCallOptions)
@@ -574,7 +574,7 @@ export class BshcClient extends AbstractBshcClient {
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -593,12 +593,12 @@ export class BshcClient extends AbstractBshcClient {
    */
   public getClimateSchedules(
     deviceId: string,
-    type: string = "HEATING",
+    type: string = 'HEATING',
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${type}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -622,7 +622,7 @@ export class BshcClient extends AbstractBshcClient {
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -646,7 +646,7 @@ export class BshcClient extends AbstractBshcClient {
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${id}/activate`,
       null,
       this.getOptions(bshbCallOptions)
@@ -670,7 +670,7 @@ export class BshcClient extends AbstractBshcClient {
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "DELETE",
+      'DELETE',
       `/${BshcClient.PATH_PREFIX}/climate/schedule/${deviceId}/${id}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -686,12 +686,12 @@ export class BshcClient extends AbstractBshcClient {
    *        define custom headers, etc. Some values may be overwritten. E.g. host
    */
   public getClimateTemplates(
-    type: string = "HEATING",
+    type: string = 'HEATING',
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<any>> {
     return this.simpleCall(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/climate/templates/${type}`,
       null,
       this.getOptions(bshbCallOptions)
@@ -704,10 +704,10 @@ export class BshcClient extends AbstractBshcClient {
    * @return an object which contains 'result' which is the subscriptionId and 'jsonrpc' which is the json-rpc version
    */
   public subscribe(): Observable<BshbResponse<{ result: string; jsonrpc: string }>> {
-    return this.call(BshcClient.COMMON_PORT, "POST", "/remote/json-rpc", {
-      jsonrpc: "2.0",
-      method: "RE/subscribe",
-      params: ["com/bosch/sh/remote/*", null], // we subscribe to all topics
+    return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+      jsonrpc: '2.0',
+      method: 'RE/subscribe',
+      params: ['com/bosch/sh/remote/*', null], // we subscribe to all topics
     });
   }
 
@@ -779,16 +779,16 @@ export class BshcClient extends AbstractBshcClient {
     timeout?: number,
     delay?: number
   ): Observable<BshbResponse<PollingResponse>> {
-    if (timeout === null || typeof timeout === "undefined") {
+    if (timeout === null || typeof timeout === 'undefined') {
       timeout = 30000;
     }
     return this.call<PollingResponse>(
       BshcClient.COMMON_PORT,
-      "POST",
-      "/remote/json-rpc",
+      'POST',
+      '/remote/json-rpc',
       {
-        jsonrpc: "2.0",
-        method: "RE/longPoll",
+        jsonrpc: '2.0',
+        method: 'RE/longPoll',
         params: [subscriptionId, timeout / 1000],
       },
       {
@@ -799,10 +799,10 @@ export class BshcClient extends AbstractBshcClient {
         timeout: timeout + (delay ? delay : 1000),
       }
     ).pipe(
-      tap((response) => {
+      tap(response => {
         if (response && response.parsedResponse && response.parsedResponse.error) {
           throw new BshbError(
-            "error during polling: " + response.parsedResponse.error,
+            'error during polling: ' + response.parsedResponse.error,
             BshbErrorType.POLLING,
             response.parsedResponse.error
           );
@@ -818,9 +818,9 @@ export class BshcClient extends AbstractBshcClient {
    *        identifier from subscription request
    */
   public unsubscribe(subscriptionId: string): Observable<BshbResponse<{ result: null; jsonrpc: string }>> {
-    return this.call(BshcClient.COMMON_PORT, "POST", "/remote/json-rpc", {
-      jsonrpc: "2.0",
-      method: "RE/unsubscribe",
+    return this.call(BshcClient.COMMON_PORT, 'POST', '/remote/json-rpc', {
+      jsonrpc: '2.0',
+      method: 'RE/unsubscribe',
       params: [subscriptionId],
     });
   }
@@ -831,7 +831,7 @@ export class BshcClient extends AbstractBshcClient {
   public getIntrusionDetectionSystemState(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/intrusion/states/system`,
       null,
       bshbCallOptions
@@ -870,13 +870,13 @@ export class BshcClient extends AbstractBshcClient {
     let data = null;
     if (profileId) {
       data = {
-        "@type": "armRequest",
+        '@type': 'armRequest',
         profileId: profileId,
       };
     }
     return this.call(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/intrusion/actions/arm`,
       data,
       bshbCallOptions
@@ -891,7 +891,7 @@ export class BshcClient extends AbstractBshcClient {
   public disarmIntrusionDetectionSystem(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/intrusion/actions/disarm`,
       null,
       bshbCallOptions
@@ -906,7 +906,7 @@ export class BshcClient extends AbstractBshcClient {
   public muteIntrusionDetectionSystem(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "POST",
+      'POST',
       `/${BshcClient.PATH_PREFIX}/intrusion/actions/mute`,
       null,
       bshbCallOptions
@@ -920,7 +920,7 @@ export class BshcClient extends AbstractBshcClient {
    *        additional options for http call
    */
   public getWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    return this.call(BshcClient.COMMON_PORT, "GET", `/${BshcClient.PATH_PREFIX}/wateralarm`, null, bshbCallOptions);
+    return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/wateralarm`, null, bshbCallOptions);
   }
 
   /**
@@ -932,7 +932,7 @@ export class BshcClient extends AbstractBshcClient {
   public getWaterAlarmConfiguration(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`,
       null,
       bshbCallOptions
@@ -948,7 +948,7 @@ export class BshcClient extends AbstractBshcClient {
   public muteWaterAlarm(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/wateralarm/actions/mute`,
       null,
       bshbCallOptions
@@ -964,12 +964,12 @@ export class BshcClient extends AbstractBshcClient {
    *        additional options for http call
    */
   public updateWaterAlarm(data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    if (data && !Object.prototype.hasOwnProperty.call(data, "@type")) {
-      data["@type"] = "waterAlarmSystemConfiguration";
+    if (data && !Object.prototype.hasOwnProperty.call(data, '@type')) {
+      data['@type'] = 'waterAlarmSystemConfiguration';
     }
     return this.call(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/wateralarm/configuration`,
       data,
       bshbCallOptions
@@ -985,7 +985,7 @@ export class BshcClient extends AbstractBshcClient {
   public getAirPurityGuardian(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
     return this.call(
       BshcClient.COMMON_PORT,
-      "GET",
+      'GET',
       `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian`,
       null,
       bshbCallOptions
@@ -1007,12 +1007,12 @@ export class BshcClient extends AbstractBshcClient {
     data: any,
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<any>> {
-    if (data && !Object.prototype.hasOwnProperty.call(data, "@type")) {
-      data["@type"] = "airPurityGuardian";
+    if (data && !Object.prototype.hasOwnProperty.call(data, '@type')) {
+      data['@type'] = 'airPurityGuardian';
     }
     return this.call(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/airquality/airpurityguardian/${id}`,
       data,
       bshbCallOptions
@@ -1026,7 +1026,7 @@ export class BshcClient extends AbstractBshcClient {
    *        additional options for http call
    */
   public getMotionLights(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    return this.call(BshcClient.COMMON_PORT, "GET", `/${BshcClient.PATH_PREFIX}/motionlights`, null, bshbCallOptions);
+    return this.call(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/motionlights`, null, bshbCallOptions);
   }
 
   /**
@@ -1040,12 +1040,12 @@ export class BshcClient extends AbstractBshcClient {
    *        additional options for http call
    */
   public updateMotionLights(id: string, data: any, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
-    if (data && !Object.prototype.hasOwnProperty.call(data, "@type")) {
-      data["@type"] = "motionlight";
+    if (data && !Object.prototype.hasOwnProperty.call(data, '@type')) {
+      data['@type'] = 'motionlight';
     }
     return this.call(
       BshcClient.COMMON_PORT,
-      "PUT",
+      'PUT',
       `/${BshcClient.PATH_PREFIX}/motionlights/${id}`,
       data,
       bshbCallOptions
