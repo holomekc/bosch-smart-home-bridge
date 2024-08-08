@@ -11,7 +11,8 @@
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --max-warnings 0 --fix .",
     "prettier": "prettier --write .",
-    "test": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --grep should --exit"
+    "test": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --grep should --exit",
+    "release": "semantic-release"
   },
   "keywords": [
     "Bosch Smart Home",
