@@ -1,10 +1,11 @@
-branches: ['master']
+branches: [ 'master' ]
 repositoryUrl: 'git@github.com:holomekc/bosch-smart-home-bridge.git'
 tagFormat: ${version}
 plugins:
   # https://github.com/semantic-release/semantic-release/blob/master/docs/extending/plugins-list.md
   - '@semantic-release/commit-analyzer'
   - '@semantic-release/exec'
+  - 'semantic-release-yarn'
   - '@semantic-release/github'
 dryRun: false
 ci: true
@@ -26,7 +27,6 @@ verifyRelease:
       echo "version=${nextRelease.version}" >> "$GITHUB_OUTPUT" || echo "Most likely no ci env. Skipping export of ${nextRelease.version}"
 
 generateNotes: false
-publish: false
 
 success:
   - path: '@semantic-release/exec'
