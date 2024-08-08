@@ -71,7 +71,7 @@ resources
 .commitlintrc.yaml
 .editorconfig
 .mocharc.json
-releaserc.yaml
+.releaserc.yaml
 disable-publish-semantic-release-github.js
 eslint.config.mjs
 prettier.config.mjs
