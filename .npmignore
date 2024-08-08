@@ -64,3 +64,15 @@ typings/
 
 # next.js build output
 .next
+
+# Project
+.husky
+resources
+.commitlintrc.yaml
+.editorconfig
+.mocharc.json
+releaserc.yaml
+disable-publish-semantic-release-github.js
+eslint.config.mjs
+prettier.config.mjs
+release-tags.sh
