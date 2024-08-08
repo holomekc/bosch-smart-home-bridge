@@ -5,10 +5,10 @@
  * @since 26.09.2019
  */
 export class BoschClientData {
-  private "@type" = "client";
+  private '@type' = 'client';
   private id: string;
   private name: string;
-  private primaryRole = "ROLE_RESTRICTED_CLIENT";
+  private primaryRole = 'ROLE_RESTRICTED_CLIENT';
   private deleted = false;
 
   /**
@@ -26,7 +26,7 @@ export class BoschClientData {
     id: string,
     private certificate: string
   ) {
-    this.id = "oss_" + id;
-    this.name = "OSS " + name;
+    this.id = 'oss_' + id;
+    this.name = 'OSS ' + name;
   }
 }

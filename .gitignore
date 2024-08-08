@@ -47,3 +47,5 @@ typings/
 .next
 
 .nyc_output
+
+.yarn

@@ -1,4 +1,4 @@
-import { PollingResponseError } from "./polling-response-error";
+import { PollingResponseError } from './polling-response-error';
 
 /**
  * Model of polling response

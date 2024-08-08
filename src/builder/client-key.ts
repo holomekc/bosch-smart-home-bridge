@@ -1,4 +1,4 @@
-import { BoschSmartHomeBridgeBuilder } from "./bosch-smart-home-bridge-builder";
+import { BoschSmartHomeBridgeBuilder } from './bosch-smart-home-bridge-builder';
 
 /**
  * Part of {@link BoschSmartHomeBridgeBuilder} to make sure that required properties are set.

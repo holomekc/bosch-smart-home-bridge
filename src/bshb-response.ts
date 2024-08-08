@@ -1,4 +1,4 @@
-import * as http from "http";
+import * as http from 'http';
 
 /**
  * This response object is used to wrap the response from BSHC. It contains the {@link http.IncomingMessage}

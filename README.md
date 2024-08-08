@@ -28,7 +28,7 @@ The builder will force you to set every mandatory properties:
 ```typescript
 const certificate = BshbUtils.generateClientCertificate();
 const bshb = BoschSmartHomeBridgeBuilder.builder()
-  .withHost("192.168.0.10")
+  .withHost('192.168.0.10')
   .withClientCert(certificate.cert)
   .withClientPrivateKey(certificate.private)
   .build();
@@ -44,7 +44,7 @@ Then you need to start the pairing process. Therefore, you need:
 
 ```typescript
 const identifier = BshbUtils.generateIdentifier();
-bshb.pairIfNeeded("name", identifier, "systemPassword");
+bshb.pairIfNeeded('name', identifier, 'systemPassword');
 ```
 
 ## Communication
@@ -64,11 +64,11 @@ If you are interested in updates from bshc you can use long polling. Therefore, 
 bshb
   .getBshcClient()
   .subscribe()
-  .subscribe((response) => {
+  .subscribe(response => {
     bshb
       .getBshcClient()
       .longPolling(response.parsedResponse.result)
-      .subscribe((info) => {
+      .subscribe(info => {
         // do something with the information
         // also you need to call longPolling again after connection close
       });
