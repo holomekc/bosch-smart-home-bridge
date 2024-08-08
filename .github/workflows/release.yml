@@ -38,6 +38,8 @@ jobs:
         run: yarn run lint
       - name: test
         run: yarn run test
+      - name: test
+        run: yarn run build
 
       - name: Release
         id: release
