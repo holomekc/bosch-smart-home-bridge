@@ -254,18 +254,47 @@ export class BshcClient extends AbstractBshcClient {
 
   /**
    * Get all automations
+   * @return bshb response object
+   */
+  public getAutomations(): Observable<BshbResponse<any[]>>;
+
+  /**
+   * Get a specific automation
+   * @return bshb response object
+   */
+  public getAutomations(automationId: string): Observable<BshbResponse<any[]>>;
+
+  /**
+   * Get all automations or a specific automation with the specified options.
    * @param bshbCallOptions
    *        define custom headers, etc. Some values may be overwritten. E.g. host
    * @return bshb response object
    */
-  public getAutomations(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
-    return this.simpleCall(
-      BshcClient.COMMON_PORT,
-      'GET',
-      `/${BshcClient.PATH_PREFIX}/automation/rules`,
-      null,
-      this.getOptions(bshbCallOptions)
-    );
+  public getAutomations(automationId?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>>;
+
+  public getAutomations(automationId?: string, bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+    let path = `/${BshcClient.PATH_PREFIX}/automation/rules`;
+    if (automationId) {
+      path = `/${BshcClient.PATH_PREFIX}/automation/rules/${automationId}`;
+    }
+    return this.simpleCall(BshcClient.COMMON_PORT, 'GET', path, null, this.getOptions(bshbCallOptions));
+  }
+
+  /**
+   * Update an existing or create a new automation with the specified id and data.
+   * @param automationId
+   *        Identifier of existing or new automation
+   * @param bshbCallOptions
+   *        define custom headers, etc. Some values may be overwritten. E.g. host
+   * @return bshb response object
+   */
+  public setAutomation(
+    automationId: string,
+    data: any,
+    bshbCallOptions?: BshbCallOptions
+  ): Observable<BshbResponse<any[]>> {
+    const path = `/${BshcClient.PATH_PREFIX}/automation/rules/${automationId}`;
+    return this.simpleCall(BshcClient.COMMON_PORT, 'PUT', path, data, this.getOptions(bshbCallOptions));
   }
 
   /**
