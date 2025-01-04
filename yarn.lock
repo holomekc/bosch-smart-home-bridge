@@ -492,6 +492,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/js@npm:9.17.0":
+  version: 9.17.0
+  resolution: "@eslint/js@npm:9.17.0"
+  checksum: 10c0/a0fda8657a01c60aa540f95397754267ba640ffb126e011b97fd65c322a94969d161beeaef57c1441c495da2f31167c34bd38209f7c146c7225072378c3a933d
+  languageName: node
+  linkType: hard
+
 "@eslint/js@npm:9.8.0":
   version: 9.8.0
   resolution: "@eslint/js@npm:9.8.0"
@@ -2045,7 +2052,7 @@ __metadata:
     "@commitlint/cli": "npm:19.6.1"
     "@commitlint/config-conventional": "npm:19.2.2"
     "@eslint/eslintrc": "npm:3.1.0"
-    "@eslint/js": "npm:9.8.0"
+    "@eslint/js": "npm:9.17.0"
     "@semantic-release/exec": "npm:6.0.3"
     "@tsconfig/node20": "npm:20.1.4"
     "@types/chai": "npm:4.3.17"
