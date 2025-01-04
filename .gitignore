@@ -18,6 +18,7 @@ pids
 # Compiled binary
 dist
 dist.spec
+distTest
 
 # Dependency directories
 node_modules/
