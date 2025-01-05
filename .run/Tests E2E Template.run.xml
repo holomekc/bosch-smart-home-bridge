@@ -9,6 +9,7 @@
       <env name="BSHC_CERT" value="" />
       <env name="BSHC_HOST" value="" />
       <env name="BSHC_PRIV" value="" />
+      <env name="TS_NODE_PROJECT" value="./tsconfig.spec.json" />
     </envs>
     <ui>bdd</ui>
     <extra-mocha-options>--grep e2e --exit</extra-mocha-options>

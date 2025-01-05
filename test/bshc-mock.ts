@@ -17,13 +17,21 @@ export const resetBshcAdminRouter = () => {
 };
 const bshcAdmin = express();
 
-bshc.use(bodyParser.json());
+const conditionalBodyParser = (req: any, res: any, next: any) => {
+  if (req.headers['content-type'] === 'application/octet-stream') {
+    express.raw({ type: 'application/octet-stream' })(req, res, next);
+  } else {
+    bodyParser.json()(req, res, next);
+  }
+};
+
+bshc.use(conditionalBodyParser);
 bshc.use((req, res, next) => {
   bshcRouter(req, res, next);
   next();
 });
 
-bshcAdmin.use(bodyParser.json());
+bshcAdmin.use(conditionalBodyParser);
 bshcAdmin.use((req, res, next) => {
   bshcAdminRouter(req, res, next);
   next();

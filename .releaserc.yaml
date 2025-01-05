@@ -1,4 +1,4 @@
-branches: [ 'master' ]
+branches: ['master']
 repositoryUrl: 'git@github.com:holomekc/bosch-smart-home-bridge.git'
 tagFormat: ${version}
 plugins:

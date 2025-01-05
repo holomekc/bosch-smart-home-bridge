@@ -13,4 +13,5 @@ export * from './error/bshb-error-type';
 export * from './model/bosch-client-data';
 export * from './model/polling-response';
 export * from './model/polling-response-error';
+export * from './model/binary-response';
 export * from './logger';

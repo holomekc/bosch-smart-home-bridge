@@ -18,6 +18,7 @@ pids
 # Compiled binary
 dist
 dist.spec
+distTest
 
 # Dependency directories
 node_modules/
@@ -49,3 +50,8 @@ typings/
 .nyc_output
 
 .yarn
+
+# some test relevant files
+coverage
+*.home
+*.backup
