@@ -10,6 +10,8 @@ import { BshbCallOptions } from '../bshb-call-options';
 import { BshbUtils } from '../bshb-utils';
 import * as util from 'util';
 import * as http from 'http';
+import { Buffer } from 'node:buffer';
+import { BinaryResponse } from '../model/binary-response';
 
 /**
  * This class provides a simple call for all defined clients
@@ -21,6 +23,8 @@ export abstract class AbstractBshcClient {
   protected static PAIR_PORT = 8443;
 
   private static DEFAULT_TIMEOUT = 5000;
+
+  private static CONTENT_DISPOSITION_FILE_NAME_REGEX = /filename="([^"]+)"/;
 
   /**
    * Needed parameters for a {@link AbstractBshcClient}
@@ -59,6 +63,7 @@ export abstract class AbstractBshcClient {
     options?: {
       certificateStorage?: CertificateStorage;
       systemPassword?: string;
+      isBinaryResponse?: boolean;
       bshbCallOptions?: BshbCallOptions;
     }
   ): Observable<BshbResponse<T>> {
@@ -84,9 +89,19 @@ export abstract class AbstractBshcClient {
       requestOptions.headers = {};
     }
 
-    requestOptions.headers['Content-Type'] = 'application/json';
-    requestOptions.headers['Accept'] = 'application/json';
-    requestOptions.headers['api-version'] = '3.12';
+    if (data instanceof Buffer) {
+      requestOptions.headers['Content-Type'] = 'application/octet-stream';
+    } else {
+      requestOptions.headers['Content-Type'] = 'application/json';
+      requestOptions.headers['Accept'] = 'application/json';
+      requestOptions.headers['api-version'] = '3.12';
+    }
+
+    const isBinaryResponse = options?.isBinaryResponse || false;
+
+    if (isBinaryResponse) {
+      requestOptions.headers['Accept'] = 'application/octet-stream';
+    }
 
     if (options && options.bshbCallOptions && options.bshbCallOptions) {
       Object.keys(options.bshbCallOptions).forEach(key => {
@@ -103,9 +118,11 @@ export abstract class AbstractBshcClient {
       requestOptions.headers['Systempassword'] = Buffer.from(options.systemPassword).toString('base64');
     }
 
-    let postData: string | undefined = undefined;
+    let postData: string | Buffer | undefined = undefined;
     if (data) {
       if (typeof data === 'string') {
+        postData = data;
+      } else if (data instanceof Buffer) {
         postData = data;
       } else {
         postData = JSON.stringify(data);
@@ -113,34 +130,37 @@ export abstract class AbstractBshcClient {
       requestOptions.headers['Content-Length'] = postData.length;
     }
 
-    this.logger.debug(
-      `
+    return new Observable<BshbResponse<T>>(observer => {
+      this.logger.debug(
+        `
 Request: (${requestOptions.method}) ${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}
 Headers:
 ${util.inspect(requestOptions.headers, { colors: true })}
 Body:
 ${util.inspect(data, { colors: true, depth: 10 })}
 `
-    );
-
-    return new Observable<BshbResponse<T>>(observer => {
+      );
       const req = https.request(requestOptions, res => {
         const chunks: any[] = [];
 
         res
-          .on('data', data => {
-            chunks.push(data);
+          .on('data', chunk => {
+            chunks.push(chunk);
           })
           .on('end', () => {
-            let dataString = undefined;
+            let data: any = undefined;
             if (chunks.length > 0) {
-              const data = Buffer.concat(chunks);
-              dataString = data.toString('utf-8');
+              const dataBuffer = Buffer.concat(chunks);
+              if (isBinaryResponse) {
+                data = dataBuffer;
+              } else {
+                data = dataBuffer.toString('utf-8');
+              }
             }
 
             try {
               if (res.statusCode && res.statusCode >= 300) {
-                this.logResponse(requestOptions, res, dataString);
+                this.logResponse(requestOptions, res, data);
 
                 this.handleError(
                   observer,
@@ -149,8 +169,16 @@ ${util.inspect(data, { colors: true, depth: 10 })}
                 );
               } else {
                 let parsedData = undefined;
-                if (dataString) {
-                  parsedData = JSON.parse(dataString);
+                if (data) {
+                  if (isBinaryResponse) {
+                    parsedData = {
+                      data: data,
+                      contentDisposition: res.headers['content-disposition'],
+                      fileName: this.extractFileName(res.headers['content-disposition']),
+                    } as BinaryResponse;
+                  } else {
+                    parsedData = JSON.parse(data);
+                  }
                 }
 
                 this.logResponse(requestOptions, res, parsedData);
@@ -158,7 +186,7 @@ ${util.inspect(data, { colors: true, depth: 10 })}
                 observer.next(new BshbResponse<T>(res, parsedData));
               }
             } catch (e) {
-              this.logResponse(requestOptions, res, dataString);
+              this.logResponse(requestOptions, res, data);
               observer.error(new BshbError('error during parsing response from BSHC', BshbErrorType.PARSING, e));
             } finally {
               observer.complete();
@@ -214,5 +242,13 @@ ${util.inspect(res.headers, { colors: true })}
 Content:
 ${typeof data === 'object' ? util.inspect(data, { colors: true }) : data}
 `);
+  }
+
+  private extractFileName(contentDisposition: string | undefined) {
+    if (contentDisposition) {
+      const match = contentDisposition.match(AbstractBshcClient.CONTENT_DISPOSITION_FILE_NAME_REGEX);
+      return match ? match[1] : undefined;
+    }
+    return undefined;
   }
 }

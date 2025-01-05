@@ -1,8 +1,9 @@
 {
-  "extends": "./node_modules/@tsconfig/node20/tsconfig.json",
+  "extends": "./node_modules/@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*"]
 }

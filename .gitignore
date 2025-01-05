@@ -50,3 +50,8 @@ typings/
 .nyc_output
 
 .yarn
+
+# some test relevant files
+coverage
+*.home
+*.backup

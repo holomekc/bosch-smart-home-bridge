@@ -10,6 +10,7 @@ import { BshbCallOptions } from '../bshb-call-options';
 import { PollingResponse } from '../model/polling-response';
 import { BshbError } from '../error/bshb-error';
 import { BshbErrorType } from '../error/bshb-error-type';
+import { BinaryResponse } from '../model/binary-response';
 
 /**
  * This client contains some basic calls which are available to contact Bosch Smart Home Controller (BSHC)
@@ -46,6 +47,7 @@ export class BshcClient extends AbstractBshcClient {
   private getOptions(bshbCallOptions?: BshbCallOptions): {
     certificateStorage?: CertificateStorage;
     systemPassword?: string;
+    isBinaryResponse?: boolean;
     bshbCallOptions?: BshbCallOptions;
   } {
     if (bshbCallOptions) {
@@ -1082,6 +1084,180 @@ export class BshcClient extends AbstractBshcClient {
   }
 
   /**
+   * Get the status of backup. So far the values I could see are:
+   * NONE, IN_PROGRESS, READY and ERROR.
+   *
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public getBackupStatus(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'GET',
+      `/${BshcClient.PATH_PREFIX}/system/backup/status`,
+      null,
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Create the backup on the bshc. This is only possible if the client is not a restricted client, which is the
+   * default behavior of this extension when creating a client. The client type can only be adjusted in the bosch
+   * app so far. If a backup is created it can be downloaded via getBackup. You cannot create another backup until
+   * you deleted the existing backup.
+   * @param systemPassword
+   *        This call requires the system password of the bshc.
+   * @param encryptionPassword
+   *        password used to encrypt the backup. If not specified the systemPassword is used.
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public createBackup(
+    systemPassword: string,
+    encryptionPassword?: string,
+    bshbCallOptions?: BshbCallOptions
+  ): Observable<BshbResponse<any>> {
+    let password = systemPassword;
+    if (encryptionPassword) {
+      password = encryptionPassword;
+    }
+
+    return this.privilegedCall(
+      BshcClient.COMMON_PORT,
+      'PUT',
+      `/${BshcClient.PATH_PREFIX}/system/backup`,
+      systemPassword,
+      {
+        encryptionPassword: password,
+      },
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Get the backup file as byte array. Furthermore, the result also includes some information like the filename.
+   * This method cannot be called in case the backup status is IN_PROGRESS.
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public getBackup(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<BinaryResponse>> {
+    const options = this.getOptions(bshbCallOptions);
+    options.isBinaryResponse = true;
+    return this.simpleCall(BshcClient.COMMON_PORT, 'GET', `/${BshcClient.PATH_PREFIX}/system/backup`, null, options);
+  }
+
+  /**
+   * Delete the backup file
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public deleteBackup(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'DELETE',
+      `/${BshcClient.PATH_PREFIX}/system/backup`,
+      null,
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Get the status of restore. So far the values I could see are:
+   * NONE, BACKUP_UPLOADED, RESTORE_AUTHORIZED, VALIDATING, RESTORING, RESTORED, RESTORED_OTHER_SHC, ERROR.
+   *
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public getRestoreStatus(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'GET',
+      `/${BshcClient.PATH_PREFIX}/system/restore/status`,
+      null,
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Upload a restore file specified as a buffer to bshc of a previous backup file.
+   * The restore process is not started by this call.
+   *
+   * @param data
+   *        restore file buffer data
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public uploadRestoreFile(
+    data: Buffer<ArrayBuffer>,
+    bshbCallOptions?: BshbCallOptions
+  ): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'POST',
+      `/${BshcClient.PATH_PREFIX}/system/restore`,
+      data,
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Delete the restore file
+   *
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public deleteRestoreFile(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'DELETE',
+      `/${BshcClient.PATH_PREFIX}/system/restore`,
+      null,
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Start the restore process
+   *
+   * @param encryptionPassword
+   *        password to with which the backup file was created before
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public startRestoreProcess(
+    encryptionPassword: string,
+    bshbCallOptions?: BshbCallOptions
+  ): Observable<BshbResponse<any>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'PUT',
+      `/${BshcClient.PATH_PREFIX}/system/restore`,
+      {
+        encryptionPassword: encryptionPassword,
+      },
+      bshbCallOptions
+    );
+  }
+
+  /**
+   * Get the status of the partner restore. This allows to see, which partner integrations could be restored or not.
+   * This call is only allowed after a successful restoring process or in other words when the restore status is
+   * RESTORED or RESTORED_OTHER_SHC
+   *
+   * @param bshbCallOptions
+   *        additional options for http call
+   */
+  public getPartnerRestoreStatus(bshbCallOptions?: BshbCallOptions): Observable<BshbResponse<any[]>> {
+    return this.call(
+      BshcClient.COMMON_PORT,
+      'GET',
+      `/${BshcClient.PATH_PREFIX}/system/restore/partners`,
+      null,
+      bshbCallOptions
+    );
+  }
+
+  /**
    * Not defined call to BSHC in case something is missing here
    * @param port
    *        port to use
@@ -1102,6 +1278,33 @@ export class BshcClient extends AbstractBshcClient {
     bshbCallOptions?: BshbCallOptions
   ): Observable<BshbResponse<T>> {
     const options = this.getOptions(bshbCallOptions);
+    return this.simpleCall(port, method, path, data, options);
+  }
+
+  /**
+   * Not defined privileged call to BSHC in case something is missing here. Privileged calls requires the
+   * systemPassword, which is included the request header. Only use if it is really necessary.
+   * @param port
+   *        port to use
+   * @param method
+   *        HTTP method to use
+   * @param path
+   *        url path to use
+   * @param data
+   *        data to send. Will be converted to json. It must contain @type otherwise BSHC will not understand the request.
+   * @param bshbCallOptions
+   *        define custom headers, etc. Some values may be overwritten. E.g. host
+   */
+  public privilegedCall<T>(
+    port: number,
+    method: string,
+    path: string,
+    systemPassword: string,
+    data?: any,
+    bshbCallOptions?: BshbCallOptions
+  ): Observable<BshbResponse<T>> {
+    const options = this.getOptions(bshbCallOptions);
+    options.systemPassword = systemPassword;
     return this.simpleCall(port, method, path, data, options);
   }
 }

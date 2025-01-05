@@ -72,7 +72,7 @@ resources
 .editorconfig
 .mocharc.json
 .releaserc.yaml
-disable-publish-semantic-release-github.js
+disable-publish-semantic-release-github.cjs
 eslint.config.mjs
 prettier.config.mjs
 release-tags.sh
