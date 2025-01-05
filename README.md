@@ -29,10 +29,10 @@ The builder will force you to set every mandatory properties:
 ```typescript
 const certificate = BshbUtils.generateClientCertificate();
 const bshb = BoschSmartHomeBridgeBuilder.builder()
-  .withHost('192.168.0.10')
-  .withClientCert(certificate.cert)
-  .withClientPrivateKey(certificate.private)
-  .build();
+    .withHost('192.168.0.10')
+    .withClientCert(certificate.cert)
+    .withClientPrivateKey(certificate.private)
+    .build();
 ```
 
 ## Pairing
@@ -63,31 +63,35 @@ If you are interested in updates from bshc you can use long polling. Therefore, 
 
 ```typescript
 bshb
-  .getBshcClient()
-  .subscribe()
-  .subscribe(response => {
-    bshb
-      .getBshcClient()
-      .longPolling(response.parsedResponse.result)
-      .subscribe(info => {
-        // do something with the information
-        // also you need to call longPolling again after connection close
-      });
-  });
+    .getBshcClient()
+    .subscribe()
+    .subscribe(response => {
+        bshb
+            .getBshcClient()
+            .longPolling(response.parsedResponse.result)
+            .subscribe(info => {
+                // do something with the information
+                // also you need to call longPolling again after connection close
+            });
+    });
 ```
 
 Do not forget to unsubscribe. E.g. in error case or on application end.
 
 ```typescript
 bshb
-  .getBshcClient()
-  .unsubscribe(response.parsedResponse.result)
-  .subscribe(() => {});
+    .getBshcClient()
+    .unsubscribe(response.parsedResponse.result)
+    .subscribe(() => {
+    });
 ```
 
 ## Backup & Restore
 
 With this new feature provided by bosch you can automate the backup process.
+Some of the backup operations are not allowed by a restricted client. The restricted client is the default client
+when pairing with this library. You can change the client permissions in the Bosch App. Check the mobile devices
+section and change the permissions of the client of your choice.
 
 Example can be found in the e2e test of the test folder.
 
