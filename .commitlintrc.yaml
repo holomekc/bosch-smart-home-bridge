@@ -2,7 +2,7 @@ extends:
   - '@commitlint/config-conventional'
 
 rules:
-  # Disable subject-case. We want to prefix with COMFY-xxxx
+  # Disable subject-case.
   subject-case:
     - 0
   type-enum:
