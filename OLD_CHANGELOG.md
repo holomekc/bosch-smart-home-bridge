@@ -1,5 +1,9 @@
 # Changelog
 
+This is not used anymore. See GitHub releases for changes.
+
+---
+
 All notable changes to this project will be documented in this file.
 
 ## [1.4.2] - 2024-08-02
@@ -141,9 +145,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - New services:
-  - Water alarm
-  - Air purity
-  - Motion lights
+    - Water alarm
+    - Air purity
+    - Motion lights
 
 ### Changed
 
