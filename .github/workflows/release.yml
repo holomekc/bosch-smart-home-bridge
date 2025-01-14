@@ -32,13 +32,13 @@ jobs:
       - name: Enable corepack for Yarn
         run: corepack enable
 
-      - name: install
+      - name: Install
         run: yarn install
-      - name: lint
+      - name: Lint
         run: yarn run lint
-      - name: test
+      - name: Test
         run: yarn run test
-      - name: test
+      - name: Build
         run: yarn run build
 
       - name: Release
