@@ -47,7 +47,7 @@
     "@eslint/eslintrc": "3.3.1",
     "@eslint/js": "9.23.0",
     "@semantic-release/exec": "7.0.3",
-    "@tsconfig/node22": "22.0.0",
+    "@tsconfig/node22": "22.0.1",
     "@types/chai": "4.3.16",
     "@types/express": "5.0.1",
     "@types/mocha": "10.0.10",
