@@ -370,13 +370,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.35.0":
-  version: 9.35.0
-  resolution: "@eslint/js@npm:9.35.0"
-  checksum: 10c0/d40fe38724bc76c085c0b753cdf937fa35c0d6807ae76b2632e3f5f66c3040c91adcf1aff2ce70b4f45752e60629fadc415eeec9af3be3c274bae1cac54b9840
-  languageName: node
-  linkType: hard
-
 "@eslint/js@npm:9.36.0":
   version: 9.36.0
   resolution: "@eslint/js@npm:9.36.0"
@@ -2022,7 +2015,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:8.44.0"
     "@typescript-eslint/parser": "npm:8.43.0"
     c8: "npm:10.1.3"
-    chai: "npm:6.0.1"
+    chai: "npm:6.2.0"
     conventional-changelog-conventionalcommits: "npm:9.1.0"
     cross-env: "npm:10.0.0"
     eslint: "npm:9.36.0"
@@ -2177,10 +2170,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai@npm:6.0.1":
-  version: 6.0.1
-  resolution: "chai@npm:6.0.1"
-  checksum: 10c0/a09f6019b92b471ebbdac7ecb1d8abbfe66a3cfd90c4e8e2e1b6aabddd6c9001e616f6ae9e15e169fefe9af76eb6007b7b6b285564ab62c738aa354177d01948
+"chai@npm:6.2.0":
+  version: 6.2.0
+  resolution: "chai@npm:6.2.0"
+  checksum: 10c0/a4b7d7f5907187e09f1847afa838d6d1608adc7d822031b7900813c4ed5d9702911ac2468bf290676f22fddb3d727b1be90b57c1d0a69b902534ee29cdc6ff8a
   languageName: node
   linkType: hard
 
