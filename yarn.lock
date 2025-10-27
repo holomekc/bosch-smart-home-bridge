@@ -1342,14 +1342,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:5.0.3":
-  version: 5.0.3
-  resolution: "@types/express@npm:5.0.3"
+"@types/express@npm:5.0.4":
+  version: 5.0.4
+  resolution: "@types/express@npm:5.0.4"
   dependencies:
     "@types/body-parser": "npm:*"
     "@types/express-serve-static-core": "npm:^5.0.0"
     "@types/serve-static": "npm:*"
-  checksum: 10c0/f0fbc8daa7f40070b103cf4d020ff1dd08503477d866d1134b87c0390bba71d5d7949cb8b4e719a81ccba89294d8e1573414e6dcbb5bb1d097a7b820928ebdef
+  checksum: 10c0/713f81ff2abc389d6288ba5e0f8edf3cba55b418340e4c248d55894502a136a963b88be1c9a50cbf3c066e3d057dbb1e262c92b9fe446bb51b6648e00bb57b62
   languageName: node
   linkType: hard
 
@@ -2005,7 +2005,7 @@ __metadata:
     "@semantic-release/exec": "npm:7.1.0"
     "@tsconfig/node22": "npm:22.0.2"
     "@types/chai": "npm:5.2.2"
-    "@types/express": "npm:5.0.3"
+    "@types/express": "npm:5.0.4"
     "@types/mocha": "npm:10.0.10"
     "@types/node": "npm:22.15.3"
     "@types/sinon": "npm:17.0.4"
