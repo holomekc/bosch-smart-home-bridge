@@ -2106,7 +2106,7 @@ __metadata:
     prettier-eslint: "npm:16.4.2"
     rimraf: "npm:6.0.1"
     rxjs: "npm:7.8.1"
-    selfsigned: "npm:3.0.1"
+    selfsigned: "npm:4.0.0"
     semantic-release: "npm:25.0.1"
     semantic-release-yarn: "npm:3.0.2"
     sinon: "npm:21.0.0"
@@ -6622,12 +6622,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"selfsigned@npm:3.0.1":
-  version: 3.0.1
-  resolution: "selfsigned@npm:3.0.1"
+"selfsigned@npm:4.0.0":
+  version: 4.0.0
+  resolution: "selfsigned@npm:4.0.0"
   dependencies:
     node-forge: "npm:^1"
-  checksum: 10c0/57e266192299ad5230c46f4e40b662d563e3c15b37ecaadadc22966d2b153eea28ede3c7e465ad36e5f688ad97a0974bbaf47fbfbf616d8bc8420d03ee64ffd0
+  checksum: 10c0/543e480b1a1b91e8ef582ce623867a44419bdff13a915c15482f775b0dd88ab868faf8934ec94224127982de161958e1bdb7259db569b25ad69f10b85c4460ba
   languageName: node
   linkType: hard
 
