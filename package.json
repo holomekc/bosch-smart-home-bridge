@@ -37,7 +37,7 @@
     "url": "https://github.com/holomekc/bosch-smart-home-bridge/issues"
   },
   "dependencies": {
-    "rxjs": "7.8.1",
+    "rxjs": "7.8.2",
     "selfsigned": "4.0.0",
     "uuid": "13.0.0"
   },
