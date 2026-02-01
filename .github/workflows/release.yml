@@ -11,7 +11,8 @@ env:
 
 permissions:
   id-token: write  # Required for OIDC
-  contents: read
+  contents: write
+  issues: write
 
 jobs:
   release:
