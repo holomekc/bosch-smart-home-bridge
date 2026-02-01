@@ -22,16 +22,13 @@ export class BshbUtils {
       notAfterDate = new Date(notBeforeDate);
       notAfterDate.setDate(notBeforeDate.getDate() + days);
     }
-    return await selfsigned.generate(
-      undefined,
-      {
-        keySize: 2048,
-        clientCertificate: false,
-        algorithm: 'sha256',
-        notBeforeDate,
-        ...(notAfterDate ? { notAfterDate } : {})
-      }
-    );
+    return await selfsigned.generate(undefined, {
+      keySize: 2048,
+      clientCertificate: false,
+      algorithm: 'sha256',
+      notBeforeDate,
+      ...(notAfterDate ? { notAfterDate } : {}),
+    });
   }
 
   /**
