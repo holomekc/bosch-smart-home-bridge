@@ -89,18 +89,20 @@ export abstract class AbstractBshcClient {
       requestOptions.headers = {};
     }
 
+    const headers = requestOptions.headers as http.OutgoingHttpHeaders;
+
     if (data instanceof Buffer) {
-      requestOptions.headers['Content-Type'] = 'application/octet-stream';
+      headers['Content-Type'] = 'application/octet-stream';
     } else {
-      requestOptions.headers['Content-Type'] = 'application/json';
-      requestOptions.headers['Accept'] = 'application/json';
-      requestOptions.headers['api-version'] = '3.12';
+      headers['Content-Type'] = 'application/json';
+      headers['Accept'] = 'application/json';
+      headers['api-version'] = '3.12';
     }
 
     const isBinaryResponse = options?.isBinaryResponse || false;
 
     if (isBinaryResponse) {
-      requestOptions.headers['Accept'] = 'application/octet-stream';
+      headers['Accept'] = 'application/octet-stream';
     }
 
     if (options && options.bshbCallOptions && options.bshbCallOptions) {
@@ -115,7 +117,7 @@ export abstract class AbstractBshcClient {
     }
 
     if (options && options.systemPassword) {
-      requestOptions.headers['Systempassword'] = Buffer.from(options.systemPassword).toString('base64');
+      headers['Systempassword'] = Buffer.from(options.systemPassword).toString('base64');
     }
 
     let postData: string | Buffer | undefined = undefined;
@@ -127,7 +129,7 @@ export abstract class AbstractBshcClient {
       } else {
         postData = JSON.stringify(data);
       }
-      requestOptions.headers['Content-Length'] = postData.length;
+      headers['Content-Length'] = postData.length;
     }
 
     return new Observable<BshbResponse<T>>(observer => {
