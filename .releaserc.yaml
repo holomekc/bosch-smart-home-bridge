@@ -5,7 +5,7 @@ plugins:
   # https://github.com/semantic-release/semantic-release/blob/master/docs/extending/plugins-list.md
   - '@semantic-release/commit-analyzer'
   - '@semantic-release/exec'
-  - 'semantic-release-yarn'
+  - '@semantic-release/npm'
   - '@semantic-release/github'
 dryRun: false
 ci: true
