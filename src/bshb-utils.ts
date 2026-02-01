@@ -10,16 +10,28 @@ export class BshbUtils {
    * The certificate validity is 365 days. As far as I know this does not really matter,
    * because the controller does not read the validity value of the client certificate.
    */
-  public static generateClientCertificate(): GenerateResult;
   /**
    * Generate a client certificate for communication with BSHC.
-   * The certificate validity can be defined here.As far as I know this does not really matter,
-   * because the controller does not read the validity value of the client certificate.
-   * @param days
+   * The certificate validity is 365 days by default. You can specify validity in days.
+   * @param days Number of days the certificate should be valid for (optional)
    */
-  public static generateClientCertificate(days: number): GenerateResult;
-  public static generateClientCertificate(days?: number): GenerateResult {
-    return selfsigned.generate(undefined, { keySize: 2048, clientCertificate: false, algorithm: 'sha256', days: days });
+  public static async generateClientCertificate(days?: number): Promise<GenerateResult> {
+    const notBeforeDate = new Date();
+    let notAfterDate: Date | undefined = undefined;
+    if (typeof days === 'number' && !isNaN(days)) {
+      notAfterDate = new Date(notBeforeDate);
+      notAfterDate.setDate(notBeforeDate.getDate() + days);
+    }
+    return await selfsigned.generate(
+      undefined,
+      {
+        keySize: 2048,
+        clientCertificate: false,
+        algorithm: 'sha256',
+        notBeforeDate,
+        ...(notAfterDate ? { notAfterDate } : {})
+      }
+    );
   }
 
   /**

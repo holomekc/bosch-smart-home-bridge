@@ -9,8 +9,8 @@ describe('BshbUtils', () => {
     expect(identifier.length).to.be.greaterThan(0);
   });
 
-  it('should generate client certificate', () => {
-    const result = BshbUtils.generateClientCertificate();
+  it('should generate client certificate', async () => {
+    const result = await BshbUtils.generateClientCertificate();
 
     expect(result).to.not.be.null;
     expect(result.cert).to.not.be.null;

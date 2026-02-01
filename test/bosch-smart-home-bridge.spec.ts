@@ -7,8 +7,8 @@ describe('BoschSmartHomeBridge', () => {
   let bshb: BoschSmartHomeBridge;
   let bshc: Router;
   let bshcAdmin: Router;
-  before(() => {
-    const certResult = BshbUtils.generateClientCertificate();
+  before(async () => {
+    const certResult = await BshbUtils.generateClientCertificate();
     bshb = BoschSmartHomeBridgeBuilder.builder()
       .withHost('127.0.0.1')
       .withClientCert(certResult.cert)

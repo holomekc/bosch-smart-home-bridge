@@ -37,13 +37,17 @@ bshcAdmin.use((req, res, next) => {
   next();
 });
 
-const certResult = BshbUtils.generateClientCertificate();
+let server: https.Server;
+let adminServer: https.Server;
 
-const server = https.createServer({ key: certResult.private, cert: certResult.cert }, bshc);
-const adminServer = https.createServer({ key: certResult.private, cert: certResult.cert }, bshcAdmin);
-
-server.listen(8444, () => {});
-adminServer.listen(8443, () => {});
+// Initialize servers lazily
+(async () => {
+  const certResult = await BshbUtils.generateClientCertificate();
+  server = https.createServer({ key: certResult.private, cert: certResult.cert }, bshc);
+  adminServer = https.createServer({ key: certResult.private, cert: certResult.cert }, bshcAdmin);
+  server.listen(8444, () => {});
+  adminServer.listen(8443, () => {});
+})();
 
 export class DefaultTestLogger implements Logger {
   fine(message?: any, ...optionalParams: any[]): void {

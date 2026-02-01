@@ -22,12 +22,12 @@ const pollUntil = <T>(pollInterval: number, responsePredicate: (res: T) => boole
 
 describe('BshbUtils', () => {
   let bshb: BoschSmartHomeBridge;
-  before(() => {
-    const certResult = BshbUtils.generateClientCertificate();
+  before(async () => {
+    const certResult = await BshbUtils.generateClientCertificate();
     bshb = BoschSmartHomeBridgeBuilder.builder()
       .withHost(host)
-      .withClientCert(clientCert)
-      .withClientPrivateKey(clientPrivateKey)
+      .withClientCert(certResult.cert)
+      .withClientPrivateKey(certResult.private)
       .withIgnoreCertificateCheck(true)
       .withLogger(new DefaultTestLogger())
       .build();
