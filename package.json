@@ -4,7 +4,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "husky && node disable-publish-semantic-release-github.cjs",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "clean": "rimraf dist && rimraf dist.spec",

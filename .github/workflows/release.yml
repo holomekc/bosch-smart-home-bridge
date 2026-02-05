@@ -45,6 +45,8 @@ jobs:
         run: yarn run test
       - name: Build
         run: yarn run build
+      - name: Disable GitHub plugin release for semantic-release
+        run: node disable-publish-semantic-release-github.cjs
 
       - name: Release
         id: release
